@@ -1,2 +1,2 @@
 # whatsapp-chat-analysis
- A tool to analyze your whatsapp chat with your friends, families, partner or even unknowns, using powerful python libraries.
+ This tool can be used by users to get a visual representation of their chat, such as : Their most active time, frequently used words and other things.
