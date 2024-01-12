@@ -1,16 +1,14 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
-# from flask_wtf.csrf import CSRFProtect
+from flask import Flask, render_template, request, flash
 from werkzeug.utils import secure_filename
 import secrets
 import os
 from src.Preprocessor import preprocess
-from src.Stats import messages
+from src.Stats import counter
 
 
 
 app = Flask(__name__)
 app.config.from_pyfile("config.cfg")
-# csrf = CSRFProtect(app)
 
 secret_key = secrets.token_hex(16)
 app.config['SECRET_KEY'] = secret_key
@@ -49,7 +47,6 @@ def upload():
         else:
             return "<h2>Extension not allowed !!</h2>"
 
-    # return redirect(url_for('index'))
     return render_template("index.html")
 
 @app.route("/analyze", methods=["GET"])
@@ -64,17 +61,28 @@ def analyze(filepath):
 
 @app.route("/perform_analysis", methods=["POST"])
 def perform_analysis():
+    global df
     selected_user = request.form.get("user")
-    msgs, words = messages(selected_user,df)
-    return f'''<div style="color: #007BFF;
-                          text-align: center; 
-                          font-family: sans-serif; 
-                          margin-top: 120px"
-                          "font-size: 25px;">
-                
-                <h2 color: ;>Messages: {msgs}</h2>
-                <h2 color: ;>Words: {words}</h2>
-                </div>'''
+    if selected_user == 'all':
+        selected_user_display = "All Users"
+        msgs, words, media = counter(None, df)
+    else:
+        selected_user_display = selected_user
+        msgs, words, media = counter(selected_user, df)
+
+    delete_saved_file()
+    return render_template('analyze.html', unique_users=df['user'].unique().tolist(), results={'msgs': msgs, 'words': words, 'media': media}, selected_user=selected_user_display)
+
+
+def delete_saved_file():
+    folder = os.path.join(app.instance_path, 'temp')
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        try:
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+        except Exception as e:
+            flash(f"Error deleting file: {str(e)}")
 
 if __name__ == '__main__':
     app.run(debug=True)
