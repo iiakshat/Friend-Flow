@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../static/index.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
-
+    <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@600&display=swap" rel="stylesheet">
     <title>
         Whatsapp Chat Analysis
     </title>
@@ -15,25 +15,30 @@
 </head>
 
 <body>
-    <form action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data" class="main-form">
+    <div class="title">
     <h2>Friend Flow 📈</h2>
+    </div>
+    <div class="container">
+    <form action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data" class="main-form">
     <div class="uploader" id="uploaderSection">
-        <label class="bold-font" for="filePicker">Handpick Your Chat: </label>
+        <label class="p1" for="filePicker">Handpick Your Chat: </label>
         <input class="choose-file" type="file" name="fileInput" id="filePicker" accept=".txt">
     </div>
     
-    <p class="bold-font">OR</p>
+    <p class="p1">OR</p>
 
     <center class="upload" id="dropArea">
-        <p class="bold-font">Drag & Drop It Here</p>
+        <p class="p1">Drag & Drop It Here</p>
         <input type="file" name="file" id="fileInput" accept=".txt" style="display: none;">
     </center>
     
     <div class="remove-file" id="removeFileSection" style="display: none;">
         <button id="removeFileButton" onclick="removeFile()">Remove File ❌</button>
     </div>
-    
-        <input class="analysis-button" type="submit" value="Upload">
+        <div class="analysis-button">
+        <input class="inr_btn" type="submit" value="Upload">
+        <img class="r_arrow_svg" src="../../Data/r_arrow.svg">
+        </div>
     </form>
     
     <script>
@@ -41,7 +46,7 @@
     const uploaderSection = document.getElementById('uploaderSection');
     const removeFileSection = document.getElementById('removeFileSection');
     const removeFileButton = document.getElementById('removeFileButton');
-    const dropAreaText = document.querySelector('.drop-area p.bold-font');
+    const dropAreaText = document.querySelector('.drop-area p.p1');
 
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         dropArea.addEventListener(eventName, preventDefaults, false);
@@ -120,6 +125,6 @@
         handleFiles(files);
     });
 </script>
-
+</div>
 </body>
 </html>

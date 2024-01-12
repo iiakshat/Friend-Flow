@@ -11,27 +11,38 @@
 </head>
 
 <body>
-    <div  class="container">
-    <h1>Friend Flow 📈</h1>
-    <form action="{{ url_for('perform_analysis') }}" method="post">
-        <label for="user">Choose a User:</label>
-        <br>
-        <select name="user" id="user" onchange="changeColor(this)">
-            <option value="" disabled selected style="color: rgb(160, 160, 160);">Select a user to begin analysis.</option>
-            {% for user in unique_users %}
-                <option value="{{ user }}">{{ user }}</option>
-            {% endfor %}
-        </select>        
-        <br>
-        <br>
-        <input type="submit" value="Analyze">
-    </form>
-    <script>
-        function changeColor(select) {
-            var selectedOption = select.options[select.selectedIndex];
-            selectedOption.style.color = 'black';
-        }
+    <div class="container">
+        <h1>Friend Flow 📈</h1>
+        <form action="{{ url_for('perform_analysis') }}" method="post" id="analysis-form">
+            <label for="user">Choose a User:</label>
+            <br>
+            <select name="user" id="user" style="max-height: none; height: auto;" onchange="changeColor(this); submitForm()">
+                <option value="all" {% if not selected_user %}selected{% endif %}>All Users</option>
+                {% for user in unique_users %}
+                <option value="{{ user }}" {% if selected_user == user %}selected{% endif %}>{{ user }}</option>
+                {% endfor %}
+            </select>
+        </form>
+
+        <script>
+            function changeColor(select) {
+                var selectedOption = select.options[select.selectedIndex];
+                selectedOption.style.color = 'black';
+            }
+
+            function submitForm() {
+                document.getElementById('analysis-form').submit();
+            }
         </script>
+    </div>
+    <div class="container">
+        {% if results %}
+        <div id="analysis-results" style="text-align: center; margin-top: 20px;">
+            <h2 style="color: #3559E0;">Messages: {{ results.msgs }}</h2>
+            <h2 style="color: #0F2167;">Words: {{ results.words }}</h2>
+            <h2 style="color: #3559E0;">Media Shared: {{ results.media }}</h2>
+        </div>
+        {% endif %}
     </div>
 </body>
 

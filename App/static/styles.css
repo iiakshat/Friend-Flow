@@ -1,14 +1,14 @@
-/* Reset some default styles */
 body,h1, form {
     margin: 0;
     padding: 0;
 }
 
 body {
-    font-family: 'Montserrat', sans-serif; 
+    font-family: 'Poppins','Montserrat', sans-serif; 
     background-color: #f4f4f4;
     color: #333;
 }
+
 
 .container {
     max-width: 600px;
