@@ -2,15 +2,16 @@ import re
 import pandas as pd
 
 def dateConversion(df):
-    df['Hour'] = df.date.dt.hour
-    df['Minute'] = df.date.dt.minute
-    df['Day'] = df.date.dt.day
-    df['Month'] = df.date.dt.month_name()
-    df['Year'] = df.date.dt.year
+    df['hr'] = df.date.dt.hour
+    df['min'] = df.date.dt.minute
+    df['day'] = df.date.dt.day
+    df['month'] = df.date.dt.month_name()
+    df['year'] = df.date.dt.year
 
 def userSeperator(df):
     usernames = []
     messages = []
+    media = []
     pattern = '([\w\W]+?):\s'
 
     for chat in df['messages']:
@@ -18,14 +19,27 @@ def userSeperator(df):
         content = re.split(pattern, chat)
 
         if content[1:]:
-            usernames.append(content[1])
-            messages.append(content[2])
+            usernames.append(content[1])            
+            pt = "<Media omitted>"
+            st = content[2]
+            msg = re.split(pt, st)
+
+            if len(msg)==1:
+                media.append(0)
+                messages.append(msg[0])
+
+            else:
+                media.append(1)
+                messages.append(msg[1])
+
 
         else:
             usernames.append('Zuckerberg')
+            media.append(0)
             messages.append(content[0])
         
     df['message'] = messages
+    df['media'] = media
     df['user'] = usernames
 
 def preprocess(filename):
@@ -47,7 +61,12 @@ def preprocess(filename):
     df.drop(columns=['date','messages'], inplace=True)
     return df
 
-# with open('./instance/temp/one-to-one.txt', 'r', encoding='utf-8') as f:
+# with open('./Data/flipkart.txt', 'r', encoding='utf-8') as f:
 #     t = f.read()
 
-# print(preprocess(t))
+# df = preprocess(t)
+# from Stats import counter
+
+# print(counter(None, df))
+# print(counter('.', df))
+# print(counter('Zuckerberg', df))
