@@ -5,23 +5,21 @@ body,h1, form {
 
 body {
     font-family: 'Poppins','Montserrat', sans-serif; 
-    background-color: #f4f4f4;
-    color: #333;
+    background-color: #BCEAD5;
 }
-
 
 .container {
     max-width: 600px;
     margin: 50px auto;
-    background-color: #fff;
+    background-color: #DEF5E5;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
 }
 
 h1 {
     text-align: center;
-    color: #007BFF;
+    color: #1D5D9B;
 }
 
 form {
@@ -40,22 +38,70 @@ select {
     border: 1px solid #e8e8e8;
     border-radius: 12px;
     box-sizing: border-box;
-}
-
-input[type="submit"] {
-    background-color: #007BFF;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
     cursor: pointer;
 }
 
-input[type="submit"]:hover {
-    background-color: #0056b3;
+.result-tab {
+    display: inline-block;
+    padding: 10px;
+    margin: 12px;
+    cursor: pointer;
+    border: none;
+    background-color: #BCEAD5;
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s;
 }
 
-.msgCnt {
-    color: #007BFF;
-    text-align: right;
+.result-tab:hover, select:hover, select:focus {
+    padding: 14px;
+    background-color: #75C2F6;
+}
+
+.sub-heading-display {
+    display: none;
+    text-align: center;
+    margin-top: 10px;
+    border: none;
+    font-size: large;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+select {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #BCEAD5;
+    border: none;
+    appearance: none;
+    transition: all 0.3s;
+    overflow-y: auto;
+}
+
+select option {
+    background-color: #BCEAD5; 
+}
+
+select:focus {
+    outline: none; 
+}
+
+
+.sub-heading {
+    text-align: center;
+    transition: all 0.2s;
+}
+
+.sub-heading:hover {
+    color: #1D5D9B;
+}
+
+.graph-container {
+    max-width: 900px;
+    margin-left: 200px;
+    transition: transform 0.3s ease-in-out;
+    transform-origin: right center; 
+}
+
+.graph-container:hover {
+    transform: scale(1.2);
 }

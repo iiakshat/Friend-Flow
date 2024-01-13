@@ -7,43 +7,81 @@
     <title>Analysis Page</title>
     <link rel="stylesheet" href="../static/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
 
 <body>
-    <div class="container">
+    <div class="container" id="select-container">
         <h1>Friend Flow 📈</h1>
         <form action="{{ url_for('perform_analysis') }}" method="post" id="analysis-form">
             <label for="user">Choose a User:</label>
             <br>
-            <select name="user" id="user" style="max-height: none; height: auto;" onchange="changeColor(this); submitForm()">
+            <select name="user" id="user" style="max-height: none; height: auto;"
+                onchange="changeColor(this); submitForm()">
                 <option value="all" {% if not selected_user %}selected{% endif %}>All Users</option>
                 {% for user in unique_users %}
-                <option value="{{ user }}" {% if selected_user == user %}selected{% endif %}>{{ user }}</option>
+                <option value="{{ user }}" {% if selected_user==user %}selected{% endif %}>{{ user }}</option>
                 {% endfor %}
             </select>
         </form>
-
-        <script>
-            function changeColor(select) {
-                var selectedOption = select.options[select.selectedIndex];
-                selectedOption.style.color = 'black';
-            }
-
-            function submitForm() {
-                document.getElementById('analysis-form').submit();
-            }
-        </script>
     </div>
-    <div class="container">
+
+    <div class="container hidden-container" style="padding: 0;">
         {% if results %}
         <div id="analysis-results" style="text-align: center; margin-top: 20px;">
-            <h2 style="color: #3559E0;">Messages: {{ results.msgs }}</h2>
-            <h2 style="color: #0F2167;">Words: {{ results.words }}</h2>
-            <h2 style="color: #3559E0;">Media Shared: {{ results.media }}</h2>
+            <div class="result-tab" onmouseover="showResult('{{ results.msgs }}')" onmouseout="hideResult()">Messages
+            </div>
+            <div class="result-tab" onmouseover="showResult('{{ results.words }}')" onmouseout="hideResult()">Words
+            </div>
+            <div class="result-tab" onmouseover="showResult('{{ results.media }}')" onmouseout="hideResult()">Media
+                Shared</div>
+            <div id="result-display" class="sub-heading-display"></div>
         </div>
         {% endif %}
     </div>
+
+    <div class="container hidden-container"
+        style="max-width: 900px; {% if not selected_user %}display: none;{% endif %}">
+
+        <h2 class="sub-heading"> Most Busy Users </h2>
+        <div class="graph-container" id="graph-container">
+            {{ graph_html | safe }}
+        </div>
+
+        {% if selected_user %}
+        <p style="text-align: center; max-width: 410px;
+            margin-left: 200px; 
+            vertical-align: middle;">{{ busiest }}
+        </p>
+        {% endif %}
+    </div>
+
+    <script>
+        function changeColor(select) {
+            var selectedOption = select.options[select.selectedIndex];
+            selectedOption.style.color = 'black';
+        }
+
+        function submitForm() {
+            document.getElementById('analysis-form').submit();
+        }
+
+        function showResult(result) {
+            var resultDisplay = document.getElementById('result-display');
+            if (resultDisplay) {
+                resultDisplay.innerText = result;
+                resultDisplay.style.display = 'block';
+            }
+        }
+
+        function hideResult() {
+            var resultDisplay = document.getElementById('result-display');
+            if (resultDisplay) {
+                resultDisplay.style.display = 'none';
+            }
+        }
+
+    </script>
 </body>
 
 </html>
