@@ -65,8 +65,6 @@ def preprocess(filename):
 #     t = f.read()
 
 # df = preprocess(t)
-# from Stats import counter
+# from Stats import counter, most_busy_users
 
-# print(counter(None, df))
-# print(counter('.', df))
-# print(counter('Zuckerberg', df))
+# print(most_busy_users('.',df))
