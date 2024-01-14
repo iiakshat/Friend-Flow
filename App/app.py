@@ -3,7 +3,7 @@ from werkzeug.utils import secure_filename
 import secrets
 import os
 from src.Preprocessor import preprocess
-from src.Stats import counter, most_busy_users
+from src.Stats import counter, most_busy_users, frequent_words
 
 
 
@@ -81,10 +81,16 @@ def perform_analysis():
     else:
         busiest = busiest + ' did more Messages.'
 
+    if selected_user == 'all':
+        wordcloud_image = frequent_words(df, None)
+    else:
+        wordcloud_image = frequent_words(df, selected_user)
+
     delete_saved_file()
     return render_template('analyze.html', unique_users=unique_users, 
                            results={'msgs': msgs, 'words': words, 'media': media}, 
-                           selected_user=selected_user_display, graph_html=graph_html, busiest=busiest)
+                           selected_user=selected_user_display, graph_html=graph_html, 
+                           busiest=busiest, wordcloud_image=wordcloud_image)
 
 
 def delete_saved_file():

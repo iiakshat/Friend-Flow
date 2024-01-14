@@ -56,6 +56,17 @@
         {% endif %}
     </div>
 
+    <div class="container hidden-container" 
+    style="max-width: 900px; {% if not selected_user %}display: none;{% endif %}">
+
+        <h2 class="sub-heading"> Most Common Words </h2>
+        <div class="graph-container" id="hidden-container">
+            <div >
+                {{ wordcloud_image | safe }}
+            </div>
+        </div>
+    </div>
+
     <script>
         function changeColor(select) {
             var selectedOption = select.options[select.selectedIndex];

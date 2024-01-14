@@ -3,6 +3,8 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import base64
 from io import BytesIO
+from wordcloud import WordCloud
+from .TextPreprocessor import textPreprocess
 
 cache = {}
 def counter(user, df):
@@ -70,6 +72,39 @@ def most_busy_users(suser, df):
     img_data.seek(0)
     encoded_img = base64.b64encode(img_data.getvalue()).decode('utf-8')
     img_html = f'<img src="data:image/png;base64,{encoded_img}" alt="Matplotlib Graph">'
-    
     return img_html, name[0], x
     
+def frequent_words(df, selected_user):
+    with open('././Data/stopwords.txt', 'r') as f:
+        stopwords = f.read()
+
+    if selected_user:
+        new_df = df[df['user']==selected_user]
+
+    else:
+        new_df = df[df['user']!='Zuckerberg']
+
+    new_df = new_df[~new_df['message'].isin(['<Media omitted>\n', 'This message was deleted'])]
+
+    wc = WordCloud(width=500, 
+                   height=500, 
+                   scale=3, 
+                   min_font_size=10, 
+                   colormap='tab20c', 
+                   background_color="rgb(222, 245, 229)",
+                   mode="RGB",
+                   margin=0)
+
+    new_df['message'] = textPreprocess(new_df['message'], stopwords)
+    Wc = wc.generate(new_df['message'].str.cat(sep=" "))
+    fig, ax = plt.subplots()
+    ax.imshow(Wc, interpolation='bilinear')
+    ax.axis('off')
+    plt.tight_layout(pad=0)
+    img_data = BytesIO()
+    plt.savefig(img_data, format='png')
+    img_data.seek(0)
+    encoded_img = base64.b64encode(img_data.getvalue()).decode('utf-8')
+    img_html = f'<img src="data:image/png;base64,{encoded_img}" alt="Matplotlib Graph">'
+    
+    return img_html
