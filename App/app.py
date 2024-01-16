@@ -12,7 +12,10 @@ app.config.from_pyfile("config.cfg")
 
 secret_key = secrets.token_hex(16)
 app.config['SECRET_KEY'] = secret_key
+
 df = None
+unique_users = None
+cache = {}
 
 @app.route('/')
 def home():
@@ -51,19 +54,22 @@ def upload():
 
 @app.route("/analyze", methods=["GET"])
 def analyze(filepath):
-    global df
+    global df, unique_users
     with open(filepath, 'r', encoding='utf-8') as f:
         file = f.read()
     df = preprocess(file)
     unique_users = df['user'].unique().tolist()
-    return render_template('analyze.html', unique_users=unique_users)
+    return render_template('analyze.html', unique_users=unique_users, freq_words={})
 
 
 @app.route("/perform_analysis", methods=["POST"])
 def perform_analysis():
     global df
     selected_user = request.form.get("user")
-    unique_users = df['user'].unique().tolist()
+
+    if selected_user in cache:
+        return cache[selected_user]
+    
     if selected_user == 'all':
         selected_user_display = "All Users"
         msgs, words, media = counter(None, df)
@@ -82,15 +88,20 @@ def perform_analysis():
         busiest = busiest + ' did more Messages.'
 
     if selected_user == 'all':
-        wordcloud_image = frequent_words(df, None)
+        wordcloud_image, freq_words = frequent_words(df, None)
     else:
-        wordcloud_image = frequent_words(df, selected_user)
+        wordcloud_image, freq_words = frequent_words(df, selected_user)
+    freq_words = dict(freq_words.most_common(20))
+    print(freq_words)
 
     delete_saved_file()
-    return render_template('analyze.html', unique_users=unique_users, 
+    cache[selected_user] = render_template('analyze.html', unique_users=unique_users, 
                            results={'msgs': msgs, 'words': words, 'media': media}, 
                            selected_user=selected_user_display, graph_html=graph_html, 
-                           busiest=busiest, wordcloud_image=wordcloud_image)
+                           busiest=busiest, wordcloud_image=wordcloud_image, 
+                           freq_words = freq_words)
+    
+    return cache[selected_user]
 
 
 def delete_saved_file():
