@@ -4,14 +4,11 @@ import matplotlib.pyplot as plt
 import base64
 from io import BytesIO
 from wordcloud import WordCloud
-from .TextPreprocessor import textPreprocess
+from .TextPreprocessor import textPreprocess, removeContacts
+from collections import Counter
 
-cache = {}
+
 def counter(user, df):
-    global cache
-    if user in cache:
-        return cache[user]
-    
     if user:
         df2 = df[df['user']==user]
         msgs = df2.shape[0]
@@ -19,7 +16,7 @@ def counter(user, df):
         for sentence in df2['message']:
             words.extend(sentence.split())
         media = sum(df2['media'])
-        cache[user] = (msgs, len(words), media)
+        return msgs, len(words),media
 
     else:
         msgs = df.shape[0]
@@ -27,13 +24,14 @@ def counter(user, df):
         media = sum(df['media']) 
         for sentence in df['message']:
             words.extend(sentence.split())
-        cache[user] = (msgs, len(words),media)
-    
-    return cache[user]
+        return msgs, len(words),media
 
 def most_busy_users(suser, df):
     data = round((df['user'].value_counts()/df.shape[0])*100,2)
-    data.drop("Zuckerberg",inplace=True)
+    try:
+        data.drop("Zuckerberg",inplace=True)
+    except:
+        print('You have no whatsapp notifications.')
     x = ''
 
     if len(df['user'].unique()) < 4:
@@ -84,27 +82,41 @@ def frequent_words(df, selected_user):
     else:
         new_df = df[df['user']!='Zuckerberg']
 
-    new_df = new_df[~new_df['message'].isin(['<Media omitted>\n', 'This message was deleted'])]
 
-    wc = WordCloud(width=500, 
+    ''' Null is common message for notifications like 
+        missed video call, opened (when a media is shared
+        in one time view and other party views.), etc.'''
+    
+    new_df = new_df[~new_df['message'].isin(['<Media omitted>\n', 
+                                             'This message was deleted\n',
+                                             'You deleted this message\n',
+                                             'null\n'
+                                             ])]
+    
+    new_df['message'] = textPreprocess(new_df['message'], stopwords)
+    final = removeContacts(new_df.message.str.cat(sep=' '))
+    common_words = Counter(final.split(' '))
+
+    ''' Whenever a user shares a contact with a friend the contact is 
+        shared as contact.vsf file. We don't want this to be considered
+        for analysis, so we'll have to remove this. '''
+
+    wordcloud = WordCloud(width=500, 
                    height=500, 
                    scale=3, 
-                   min_font_size=10, 
-                   colormap='tab20c', 
+                   min_font_size=10,
                    background_color="rgb(222, 245, 229)",
                    mode="RGB",
-                   margin=0)
+                   contour_width=0,
+                   contour_color='transparent',
+                   collocations=False).generate(final)
 
-    new_df['message'] = textPreprocess(new_df['message'], stopwords)
-    Wc = wc.generate(new_df['message'].str.cat(sep=" "))
-    fig, ax = plt.subplots()
-    ax.imshow(Wc, interpolation='bilinear')
-    ax.axis('off')
-    plt.tight_layout(pad=0)
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis('off')
     img_data = BytesIO()
-    plt.savefig(img_data, format='png')
+    plt.savefig(img_data, format='png', bbox_inches='tight', pad_inches=0)
     img_data.seek(0)
     encoded_img = base64.b64encode(img_data.getvalue()).decode('utf-8')
     img_html = f'<img src="data:image/png;base64,{encoded_img}" alt="Matplotlib Graph">'
-    
-    return img_html
+
+    return img_html, common_words
