@@ -7,7 +7,6 @@ def removeHtml(text):
     pattern = re.compile("<.*?>")
     return pattern.sub(r'', text)
 
-
 # URLS :
 def removeUrl(text):
     p =re.compile(r"https?://\S+|www\.\S+")
@@ -18,7 +17,11 @@ exclude = string.punctuation
 def removePunc(text):
     return text.translate(str.maketrans('','', exclude))
 
-
+# CONTACTS :
+def removeContacts(text):
+    p =re.compile(r"[A-z0-9+]*\.vcf\s\([a-z]*\s[a-z]*\)")
+    return p.sub(r'', text)
+    
 # FINAL :
 def textPreprocess(messages, stopwords):
     processed_msgs = []
