@@ -41,7 +41,11 @@ select {
     cursor: pointer;
 }
 
-.result-tab {
+.word-count-btn {
+    width: 130px;
+}
+
+.result-tab, .word-count-btn {
     display: inline-block;
     padding: 10px;
     margin: 12px;
@@ -53,7 +57,8 @@ select {
     transition: all 0.3s;
 }
 
-.result-tab:hover, select:hover, select:focus {
+.result-tab:hover, select:hover, 
+    select:focus, .word-count-btn:hover{
     padding: 14px;
     background-color: #75C2F6;
 }
@@ -102,6 +107,42 @@ select:focus {
     transform-origin: right center; 
 }
 
+.wordcloud-container {
+    margin-left: 100px;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+}
+
 .graph-container:hover {
     transform: scale(1.2);
+}
+
+.search_word{
+    margin-top: 8px;
+    font-size: 15px;
+    border-radius: 22px 0 0 22px;
+    padding-left: 30px;
+    padding-right: 18px;
+    border-style: none;
+    border-width: 1px;
+    box-shadow: 4px 2px 10px rgba(0, 0, 0, 0.22);
+    height: 42px;
+    width: 400px;
+    background-color: #BCEAD5;
+    margin-right: 0px;
+}
+
+
+.count_word_btn {
+    cursor: pointer;
+    border-radius: 0 22px 22px 0;
+    background-color: #69bb96;
+    border: none;
+    font-size: 18px;
+    padding: 10px;
+    padding-left: 20px;
+    margin-left: 0px;
+    box-shadow: 4px 2px 10px rgba(0, 0, 0, 0.22);
 }

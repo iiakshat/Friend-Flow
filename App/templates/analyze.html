@@ -60,13 +60,18 @@
     style="max-width: 900px; {% if not selected_user %}display: none;{% endif %}">
 
         <h2 class="sub-heading"> Most Common Words </h2>
-        <div class="graph-container" id="hidden-container">
-            <div >
+        <input class="search_word" id="search_word" type="text", placeholder="Enter a word here.">
+        <button type="submit" class="count_word_btn" onclick="submitWord()">🔍</button>
+        <div class="wordcloud-container">
                 {{ wordcloud_image | safe }}
-            </div>
         </div>
+        <div class="frequent-words-container">
+            {% for word, count in freq_words.items() %}
+                <button class="word-count-btn" onmouseover="showCount('{{ word }}', '{{ count }}')" onmouseout="hideCount()">{{ word }}</button>
+            {% endfor %}
+        </div>
+        <div id="word-count-display" class="sub-heading-display" style="display: none;"></div>
     </div>
-
     <script>
         function changeColor(select) {
             var selectedOption = select.options[select.selectedIndex];
@@ -92,6 +97,20 @@
             }
         }
 
+        function showCount(word, count) {
+            var wordCountDisplay = document.getElementById('word-count-display');
+            if (wordCountDisplay) {
+                wordCountDisplay.innerText = `${word} was used ${count} times.`;
+                wordCountDisplay.style.display = 'block';
+            }
+        }
+
+        function hideCount() {
+            var wordCountDisplay = document.getElementById('word-count-display');
+            if (wordCountDisplay) {
+                wordCountDisplay.style.display = 'none';
+            }
+        }
     </script>
 </body>
 

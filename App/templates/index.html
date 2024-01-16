@@ -5,49 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="author" content="Akshat Sanghvi" />
     <link rel="stylesheet" href="../static/index.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
-    <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@600&display=swap" rel="stylesheet">
     <title>
-        Whatsapp Chat Analysis
+        Friend Flow
     </title>
 
 </head>
 
 <body>
     <div class="title">
-    <h2>Friend Flow 📈</h2>
+    Friend Flow 📈
     </div>
-    <div class="container">
+    <div class="container" id="container">
+    <div class="hidden">
     <form action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data" class="main-form">
     <div class="uploader" id="uploaderSection">
         <label class="p1" for="filePicker">Handpick Your Chat: </label>
         <input class="choose-file" type="file" name="fileInput" id="filePicker" accept=".txt">
     </div>
     
-    <p class="p1">OR</p>
+    <p class="p1 or">OR</p>
 
     <center class="upload" id="dropArea">
-        <p class="p1">Drag & Drop It Here</p>
+        <p class="p1" id="dropAreaText">DROP CONVERSATION HERE!</p>
         <input type="file" name="file" id="fileInput" accept=".txt" style="display: none;">
     </center>
-    
     <div class="remove-file" id="removeFileSection" style="display: none;">
         <button id="removeFileButton" onclick="removeFile()">Remove File ❌</button>
     </div>
-        <div class="analysis-button">
-        <input class="inr_btn" type="submit" value="Upload">
-        <img class="r_arrow_svg" src="../../Data/r_arrow.svg">
-        </div>
-    </form>
+    <button class="analysis-button" type="submit">Upload</button>
+</form>
+</div>
     
     <script>
+    const title = document.querySelector('.title');
+    const body = document.body;
+    const button = document.button;
     const dropArea = document.getElementById('dropArea');
     const uploaderSection = document.getElementById('uploaderSection');
     const removeFileSection = document.getElementById('removeFileSection');
     const removeFileButton = document.getElementById('removeFileButton');
-    const dropAreaText = document.querySelector('.drop-area p.p1');
-
+    const dropAreaText = document.getElementById('dropAreaText');
+    
+        title.addEventListener('mouseover', () => {
+            body.style.backgroundColor = '#000000';
+            container.style.backgroundColor = '#B2B2B2';
+            dropArea.style.border = '4px dashed #000000';
+        });
+    
+        title.addEventListener('mouseout', () => {
+            body.style.backgroundColor = '';
+            container.style.backgroundColor = '';
+            dropArea.style.border = '';
+        });
+        
+    
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         dropArea.addEventListener(eventName, preventDefaults, false);
         document.body.addEventListener(eventName, preventDefaults, false);
@@ -84,6 +95,7 @@
     }
 
     function handleFiles(files) {
+        const ortext = document.querySelector('.p1.or');
         if (files.length > 0) {
             const uploadedFile = files[0];
             const fileNameDisplay = document.createElement('p');
@@ -104,27 +116,36 @@
                 console.log("Uploaded File Content:", fileContent);
             };
             reader.readAsText(uploadedFile);
+            ortext.style.display = 'none';
         }
+        else {
+        ortext.style.display = 'block';
+    }
     }
 
     function removeFile() {
-        dropAreaText.innerHTML = 'Drag & Drop It Here';
-
+        const fileInput = document.getElementById('fileInput');
+        const ortext = document.querySelector('.p1.or');
+        dropAreaText.innerHTML = 'DROP CONVERSATION HERE!';
         uploaderSection.style.display = 'block';
-        dropArea.classList.add('uploader', 'drop-area');
-
+        dropArea.style.border = '4px dashed #1D5D9B';
         removeFileSection.style.display = 'none';
-    }
+        ortext.style.display = 'block';
+        fileInput.value = '';
 
+            event.stopPropagation();
+            event.preventDefault();
+        }
     dropArea.addEventListener('click', () => {
-        document.getElementById('fileInput').click();
+        fileInput.click();
     });
 
-    document.getElementById('fileInput').addEventListener('change', (e) => {
+    fileInput.addEventListener('change', (e) => {
         const files = e.target.files;
         handleFiles(files);
     });
 </script>
+
 </div>
 </body>
 </html>
