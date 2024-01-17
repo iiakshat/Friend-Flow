@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, flash
+from flask import Flask, render_template, request, flash, jsonify
 from werkzeug.utils import secure_filename
 import secrets
 import os
+import re
 from src.Preprocessor import preprocess
 from src.Stats import counter, most_busy_users, frequent_words
 
@@ -16,6 +17,7 @@ app.config['SECRET_KEY'] = secret_key
 df = None
 unique_users = None
 cache = {}
+countr = None
 
 @app.route('/')
 def home():
@@ -57,14 +59,23 @@ def analyze(filepath):
     global df, unique_users
     with open(filepath, 'r', encoding='utf-8') as f:
         file = f.read()
+    chat_len = len(file)
+    threshold = 3_00_000
+    if chat_len > threshold:
+        start_len = chat_len - threshold
+        file = file[start_len:]
+        pattern = '([\w\W]+?):\s'
+        res = re.search(pattern, file)
+        file = file[res.start():]
+
     df = preprocess(file)
     unique_users = df['user'].unique().tolist()
-    return render_template('analyze.html', unique_users=unique_users, freq_words={})
+    return render_template('analyze.html', unique_users=unique_users, freq_words={}, chat_content=chat_len)
 
 
 @app.route("/perform_analysis", methods=["POST"])
 def perform_analysis():
-    global df
+    global df, countr
     selected_user = request.form.get("user")
 
     if selected_user in cache:
@@ -91,8 +102,8 @@ def perform_analysis():
         wordcloud_image, freq_words = frequent_words(df, None)
     else:
         wordcloud_image, freq_words = frequent_words(df, selected_user)
+    countr = freq_words
     freq_words = dict(freq_words.most_common(20))
-    print(freq_words)
 
     delete_saved_file()
     cache[selected_user] = render_template('analyze.html', unique_users=unique_users, 
@@ -102,6 +113,10 @@ def perform_analysis():
                            freq_words = freq_words)
     
     return cache[selected_user]
+
+@app.route('/get_word_counts', methods=['POST'])
+def get_word_counts():
+    return jsonify(countr)
 
 
 def delete_saved_file():
