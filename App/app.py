@@ -114,7 +114,7 @@ def perform_analysis():
     
     return cache[selected_user]
 
-@app.route('/get_word_counts', methods=['POST'])
+@app.route('/get_word_counts', methods=['GET'])
 def get_word_counts():
     return jsonify(countr)
 
