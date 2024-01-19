@@ -124,13 +124,15 @@ select:focus {
 .search-container {
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 .search_word {
-    margin-left: 120px;
+    margin-top: 20px;
+    margin-left: 175px;
     flex: 1;
-    height: 26px;
-    width: 300px;
+    height: 20px;
+    width: 400px;
     padding: 8px;
     padding-left: 18px;
     font-size: 16px;
@@ -138,19 +140,28 @@ select:focus {
     border-color: rgb(192, 192, 192);
     border-width: 1px;
     border-radius: 40px 0 0 40px;
+    background-color: #D5ECC2;
     box-shadow: inset 0px 1px 2px rgba(0, 0, 0, 0.15);
 }
 
 .frequent-words-container {
     margin-left: 60px;
 }
+
 .count_word_btn {
-    height: 36px;
-    padding: 14px 22px 28px 22px;
-    background-color: rgb(248, 248, 248);
+    height: 18px;
+    padding: 11px 17px 24px 17px;
+    background-color: #cce19b;
     border: solid;
     border-width: 1px;
     border-color: rgb(192, 192, 192);
     border-radius: 0 40px 40px 0;
     cursor: pointer;
+    transition: all 0.3s;
+}
+
+.count_word_btn:hover {
+    padding: 11px 23px 24px 23px;
+    background-color: #3ba2e7;
+    color: aliceblue;
 }

@@ -67,39 +67,30 @@
         <div class="wordcloud-container">
             {{ wordcloud_image | safe }}
         </div>
+        <div id="search-container">
+            <input class="search_word" type="text" id="searchTerm" placeholder="Enter a word here.">
+            <button id="searchButton" onmouseover="searchWord()" class="count_word_btn">Hover Here</button>
+        </div>
         <div class="frequent-words-container">
             {% for word, count in freq_words.items() %}
             <button class="word-count-btn" onmouseover="showCount('{{ word }}', '{{ count }}')" onmouseout="hideCount()">{{ word }}</button>
             {% endfor %}
         </div>
-        <div id="search-container">
-            <input class="search_word" type="text" id="searchTerm" placeholder="Enter a word here.">
-            <button id="searchButton" onmouseover="searchWord()" class="count_word_btn">Search</button>
-        </div>
-        <div id="searchResult" class="sub-heading-display" style="display: none;"></div>
+        <div id="word-count-display" class="sub-heading-display" style="display: none;"></div>
         </div>
     </div>
 
 
     <script>
-    function searchWord() {
-        var searchTerm = $('#searchTerm').val();
-        $.get('/get_word_counts', function(wordCounts) {
-            var resultDisplay = $('#searchResult');
-            var count = wordCounts[searchTerm.toLowerCase()] || 0;
-            resultDisplay.text(searchTerm + ': ' + count);
-            resultDisplay.css('display', 'block');
-        });
-    }
         function changeColor(select) {
             var selectedOption = select.options[select.selectedIndex];
             selectedOption.style.color = 'black';
         }
-
+        
         function submitForm() {
             document.getElementById('analysis-form').submit();
         }
-
+        
         function showResult(result) {
             var resultDisplay = document.getElementById('result-display');
             if (resultDisplay) {
@@ -107,13 +98,23 @@
                 resultDisplay.style.display = 'block';
             }
         }
-
+        
         function hideResult() {
             var resultDisplay = document.getElementById('result-display');
             if (resultDisplay) {
                 resultDisplay.style.display = 'none';
             }
         }
+        
+        function searchWord() {
+        var searchTerm = $('#searchTerm').val();
+        $.get('/get_word_counts', function(countr) {
+            var resultDisplay = $('#word-count-display');
+            var count = countr[searchTerm.toLowerCase()] || 0;
+            resultDisplay.text(searchTerm + ' was used ' + count + 'times.');
+            resultDisplay.css('display', 'block');
+        });
+    }
 
         function showCount(word, count) {
             var wordCountDisplay = document.getElementById('word-count-display');
