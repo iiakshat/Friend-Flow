@@ -1,11 +1,13 @@
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
 import base64
 from io import BytesIO
 from wordcloud import WordCloud
 from .TextPreprocessor import textPreprocess, removeContacts
+import matplotlib
+matplotlib.use('Agg')
+import pandas as pd
+import matplotlib.pyplot as plt
 from collections import Counter
+import emoji
 
 
 def counter(user, df):
@@ -25,6 +27,7 @@ def counter(user, df):
         for sentence in df['message']:
             words.extend(sentence.split())
         return msgs, len(words),media
+
 
 def most_busy_users(suser, df):
     data = round((df['user'].value_counts()/df.shape[0])*100,2)
@@ -72,6 +75,7 @@ def most_busy_users(suser, df):
     img_html = f'<img src="data:image/png;base64,{encoded_img}" alt="Matplotlib Graph">'
     return img_html, name[0], x
     
+
 def frequent_words(df, selected_user):
     with open('././Data/stopwords.txt', 'r') as f:
         stopwords = f.read()
@@ -120,3 +124,19 @@ def frequent_words(df, selected_user):
     img_html = f'<img src="data:image/png;base64,{encoded_img}" alt="Matplotlib Graph">'
 
     return img_html, common_words
+
+
+def most_common_emoji(selected_user,df):
+    if selected_user:
+        df = df[df['user'] == selected_user]
+
+    all_emojis = set(emoji.EMOJI_DATA)
+
+    emojis = []
+    for message in df['message']:
+        emojis.extend([i for i in message if i in all_emojis])
+
+    top_emojis = {}
+    for i in Counter(emojis).most_common(5):
+        top_emojis[emoji.emojize(i[0])] = i[1]
+    return top_emojis
