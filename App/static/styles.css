@@ -42,6 +42,7 @@ select {
 }
 
 .word-count-btn {
+    font-family: "Segoe UI Emoji", "Noto Color Emoji", "Segoe UI Symbol", "Apple Color Emoji", sans-serif;
     text-align: center;
     vertical-align: middle;
     width: 130px;
@@ -63,6 +64,10 @@ select {
     select:focus, .word-count-btn:hover{
     padding: 14px;
     background-color: #75C2F6;
+}
+
+.word-count-btn:hover, .result-tab:hover{
+color: aliceblue;
 }
 
 .sub-heading-display {
@@ -93,7 +98,7 @@ select:focus {
 }
 
 
-.sub-heading {
+.sub-heading{
     text-align: center;
     transition: all 0.2s;
 }
@@ -115,6 +120,7 @@ select:focus {
     overflow: hidden;
     width: 100%;
     height: 100%;
+    margin-bottom: 60px;
 }
 
 .graph-container:hover {
@@ -129,7 +135,7 @@ select:focus {
 
 .search_word {
     margin-top: 20px;
-    margin-left: 175px;
+    margin-left: 250px;
     flex: 1;
     height: 20px;
     width: 400px;
@@ -142,6 +148,22 @@ select:focus {
     border-radius: 40px 0 0 40px;
     background-color: #D5ECC2;
     box-shadow: inset 0px 1px 2px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    width: 20%;
+    transition: all ease 0.3s;
+}
+
+.search_word:hover  {
+    margin-left: 175px;
+    width: 50%;
+    background-color: #a9ddff78;
+}
+
+.word-container {
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0px 1px 10px rgba(179, 232, 32, 0.35);
+    background-color: #b1cd8525;
 }
 
 .frequent-words-container {

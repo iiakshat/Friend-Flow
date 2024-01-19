@@ -67,14 +67,23 @@
         <div class="wordcloud-container">
             {{ wordcloud_image | safe }}
         </div>
-        <div id="search-container">
+        <div class="frequent-words-container">
+            <div class="word-container">
+            <div id="search-container">
             <input class="search_word" type="text" id="searchTerm" placeholder="Enter a word here.">
-            <button id="searchButton" onmouseover="searchWord()" class="count_word_btn">Hover Here</button>
+            <button id="searchButton" onmouseover="searchWord()" class="count_word_btn">Hover Here</button></div>
+            {% for word, count in freq_words.items() %}
+            <button class="word-count-btn" onmouseover="showCount('{{ word.capitalize() }}', '{{ count }}')" onmouseout="hideCount()">{{ word.capitalize() }}</button>
+            {% endfor %}
+            </div>
         </div>
         <div class="frequent-words-container">
-            {% for word, count in freq_words.items() %}
-            <button class="word-count-btn" onmouseover="showCount('{{ word }}', '{{ count }}')" onmouseout="hideCount()">{{ word }}</button>
+            <h3 style="text-align: center;"> Most Used Emojis</h3>
+            <div class="word-container">
+            {% for emoji, count in top_emojis.items() %}
+            <button class="word-count-btn" onmouseover="showCount('{{ emoji }}', '{{ count }}')" onmouseout="hideCount()">{{ emoji }}</button>
             {% endfor %}
+            </div>
         </div>
         <div id="word-count-display" class="sub-heading-display" style="display: none;"></div>
         </div>
