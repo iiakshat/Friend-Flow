@@ -8,7 +8,7 @@ from src.Stats import *
 
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 app.config.from_pyfile("config.cfg")
 
 secret_key = secrets.token_hex(16)

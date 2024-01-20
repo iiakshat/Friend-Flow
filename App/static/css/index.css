@@ -1,11 +1,4 @@
-@font-face {
-  font-family: 'Acme';
-  src: url(../../Data/Mico.ttf);
-}
-
 body {
-    font-family: "Acme", sans-serif;
-    background-color: #BCEAD5;
     display: flex;
     flex-direction: column;
     align-items: center;
