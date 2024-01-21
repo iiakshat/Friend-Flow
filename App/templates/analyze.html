@@ -52,9 +52,7 @@
         </div>
 
         {% if selected_user %}
-        <p style="text-align: center; max-width: 410px;
-            margin-left: 200px; 
-            vertical-align: middle;">{{ busiest }}
+        <p style="text-align: center; width: 550px;">{{ busiest }}
         </p>
         {% endif %}
     </div>
@@ -77,15 +75,15 @@
             {% endfor %}
             </div>
         </div>
-        <div class="frequent-words-container">
+        <div class="frequent-words-container" style="margin-bottom: 200px;">
             <h3 style="text-align: center;"> Most Used Emojis</h3>
             <div class="word-container">
             {% for emoji, count in top_emojis.items() %}
             <button class="word-count-btn" onmouseover="showCount('{{ emoji | escape }}', '{{ count }}')" onmouseout="hideCount()">{{ emoji | escape }}</button>
             {% endfor %}
             </div>
-        </div>
-        <div id="word-count-display" class="sub-heading-display" style="display: none;"></div>
+            <div id="word-count-display" class="sub-heading-display" style="display: none;"></div>
+            </div>
         </div>
     </div>
 
@@ -117,12 +115,17 @@
         
         function searchWord() {
         var searchTerm = $('#searchTerm').val();
+        if (searchTerm.trim() !== '') {
         $.get('/get_word_counts', function(countr) {
             var resultDisplay = $('#word-count-display');
             var count = countr[searchTerm.toLowerCase()] || 0;
             resultDisplay.text(searchTerm + ' was used ' + count + 'times.');
             resultDisplay.css('display', 'block');
+            resultDisplay.css('margin-top', '30px');
         });
+    } else {
+        $('#searchButton').prop('disabled', true);
+    }
     }
 
         function showCount(word, count) {
