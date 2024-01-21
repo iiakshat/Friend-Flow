@@ -50,7 +50,8 @@ select {
     transition: all 0.3s;
     overflow-y: auto;
     backdrop-filter: blur(10px);
-    margin-top: 0px;
+    margin-top: 3px;
+    margin-bottom: 20px;
 }
 
 .word-count-btn {
@@ -65,7 +66,7 @@ select {
     margin: 12px;
     cursor: pointer;
     border: none;
-    background-color: #BCEAD5;
+    background-color: #bcead55d;
     border-radius: 4px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     transition: all 0.3s;
@@ -92,7 +93,8 @@ color: aliceblue;
 }
 
 select option {
-    background-color: #BCEAD5; 
+    background-color: #bcead55d;
+
 }
 
 select:focus {
@@ -103,6 +105,7 @@ select:focus {
 .sub-heading{
     text-align: center;
     transition: all 0.2s;
+    margin-bottom: 50px;
 }
 
 .sub-heading:hover {
@@ -149,7 +152,7 @@ select:focus {
     font-size: 16px;
     border:none;
     border-radius: 40px 0 0 40px;
-    background-color: #D5ECC2;
+    background-color: #bcead5;
     box-shadow: inset 0px 1px 2px rgba(0, 0, 0, 0.15);
     cursor: pointer;
     width: 20%;
@@ -169,6 +172,7 @@ select:focus {
     box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.35);
     background-color: #b1cd8525;
     backdrop-filter: blue(10px);
+    margin-bottom: 50px;
 }
 
 .frequent-words-container {
@@ -180,7 +184,7 @@ select:focus {
     letter-spacing: 2px;
     height: 18px;
     padding: 11px 17px 25px 17px;
-    background-color: #cce19b;
+    background-color: #bed1e3;
     border: solid;
     border:none;
     border-color: rgb(192, 192, 192);
