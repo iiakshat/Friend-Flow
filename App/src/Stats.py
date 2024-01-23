@@ -1,7 +1,7 @@
 import base64
 from io import BytesIO
 from wordcloud import WordCloud
-from .TextPreprocessor import textPreprocess, removeContacts
+from .TextPreprocessor import *
 import matplotlib
 matplotlib.use('Agg')
 import pandas as pd
@@ -9,24 +9,28 @@ import matplotlib.pyplot as plt
 from collections import Counter
 import emoji
 
+links = []
 
 def counter(user, df):
+    global links
     if user:
         df2 = df[df['user']==user]
         msgs = df2.shape[0]
-        words = []
         for sentence in df2['message']:
-            words.extend(sentence.split())
-        media = sum(df2['media'])
-        return msgs, len(words),media
+            link = extractUrl(sentence)
+            if link:
+                links.extend(link)
+        media = df2['media'].sum()
+        return msgs, len(links), media
 
     else:
         msgs = df.shape[0]
-        words = []
-        media = sum(df['media']) 
+        media = df['media'].sum()
         for sentence in df['message']:
-            words.extend(sentence.split())
-        return msgs, len(words),media
+            link = extractUrl(sentence)
+            if link:
+                links.extend(link)
+        return msgs, len(links), media
 
 
 def most_busy_users(suser, df):
@@ -61,7 +65,7 @@ def most_busy_users(suser, df):
     fig1.set_facecolor('None') 
     ax1.pie(val, colors = colors, labels=name, autopct='%1.1f%%', 
             startangle=90, pctdistance=0.85, explode = explode)
-    centre_circle = plt.Circle((0,0),0.70,fc='#DEF5E5')
+    centre_circle = plt.Circle((0,0),0.70,fc='none')
 
     fig = plt.gcf()
     fig.gca().add_artist(centre_circle)
@@ -69,7 +73,7 @@ def most_busy_users(suser, df):
     plt.tight_layout()
 
     img_data = BytesIO()
-    plt.savefig(img_data, format='png')
+    plt.savefig(img_data, format='png', transparent=True)
     img_data.seek(0)
     encoded_img = base64.b64encode(img_data.getvalue()).decode('utf-8')
     img_html = f'<img src="data:image/png;base64,{encoded_img}" alt="Matplotlib Graph">'
@@ -90,13 +94,13 @@ def frequent_words(df, selected_user):
     ''' Null is common message for notifications like 
         missed video call, opened (when a media is shared
         in one time view and other party views.), etc.'''
-    
+
     new_df = new_df[~new_df['message'].isin(['<Media omitted>\n', 
                                              'This message was deleted\n',
                                              'You deleted this message\n',
-                                             'null\n'
+                                             'null\n', '\n'
                                              ])]
-    
+
     new_df['message'] = textPreprocess(new_df['message'], stopwords)
     final = removeContacts(new_df.message.str.cat(sep=' '))
     common_words = Counter(final.split(' '))
@@ -109,13 +113,13 @@ def frequent_words(df, selected_user):
                    height=500, 
                    scale=3, 
                    min_font_size=10,
-                   background_color="rgb(222, 245, 229)",
-                   mode="RGB",
+                   background_color=None,
+                   mode="RGBA",
                    contour_width=0,
                    contour_color='transparent',
                    collocations=False).generate(final)
 
-    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.imshow(wordcloud, interpolation='bilinear', alpha=0.8)
     plt.axis('off')
     img_data = BytesIO()
     plt.savefig(img_data, format='png', bbox_inches='tight', pad_inches=0)
