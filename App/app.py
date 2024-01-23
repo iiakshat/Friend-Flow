@@ -83,10 +83,10 @@ def perform_analysis():
     
     if selected_user == 'all':
         selected_user_display = "All Users"
-        msgs, words, media = counter(None, df)
+        msgs, links, media = counter(None, df)
     else:
         selected_user_display = selected_user
-        msgs, words, media = counter(selected_user, df)
+        msgs, links, media = counter(selected_user, df)
     
     graph_html, busiest, x = most_busy_users(selected_user, df)
     if len(unique_users)>3:
@@ -108,7 +108,7 @@ def perform_analysis():
 
     delete_saved_file()
     cache[selected_user] = render_template('analyze.html', unique_users=unique_users, 
-                           results={'msgs': msgs, 'words': words, 'media': media}, 
+                           results={'msgs': msgs, 'links': links, 'media': media}, 
                            selected_user=selected_user_display, graph_html=graph_html, 
                            busiest=busiest, wordcloud_image=wordcloud_image, 
                            freq_words = freq_words, top_emojis=top_emojis)
