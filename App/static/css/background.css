@@ -11,7 +11,7 @@ src: url(../font/Grandstander-SemiBold.ttf);
 body {
     background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
     background-size: 400% 1000%;
-    animation: gradient 35s ease infinite;
+    animation: gradient 20s ease infinite;
     font-family: 'Grandstander', 'sans-sarif';
     letter-spacing: 1px;
 }

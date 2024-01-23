@@ -34,10 +34,10 @@
         <div id="analysis-results" style="text-align: center; margin-top: 20px;">
             <div class="result-tab" onmouseover="showResult('{{ results.msgs }}')" onmouseout="hideResult()">Messages
             </div>
-            <div class="result-tab" onmouseover="showResult('{{ results.words }}')" onmouseout="hideResult()">Words
-            </div>
             <div class="result-tab" onmouseover="showResult('{{ results.media }}')" onmouseout="hideResult()">Media
                 Shared</div>
+            <div class="result-tab" onmouseover="showResult('{{ results.links }}')" onmouseout="hideResult()">Links
+            </div>
             <div id="result-display" class="sub-heading-display"></div>
         </div>
         {% endif %}
@@ -75,7 +75,7 @@
             {% endfor %}
             </div>
         </div>
-        <div class="frequent-words-container" style="margin-bottom: 200px;">
+        <div class="frequent-words-container" style="margin-bottom: 80px;">
             <h3 style="text-align: center;"> Most Used Emojis</h3>
             <div class="word-container">
             {% for emoji, count in top_emojis.items() %}
