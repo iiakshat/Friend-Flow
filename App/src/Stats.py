@@ -72,12 +72,12 @@ def most_busy_users(suser, df):
     ax1.axis('equal')  
     plt.tight_layout()
 
-    img_data = BytesIO()
-    plt.savefig(img_data, format='png', transparent=True)
-    img_data.seek(0)
-    encoded_img = base64.b64encode(img_data.getvalue()).decode('utf-8')
-    img_html = f'<img src="data:image/png;base64,{encoded_img}" alt="Matplotlib Graph">'
-    return img_html, name[0], x
+    graph_data = BytesIO()
+    plt.savefig(graph_data, format='png', transparent=True)
+    graph_data.seek(0)
+    encoded_img = base64.b64encode(graph_data.getvalue()).decode('utf-8')
+    graph_html = f'<img src="data:image/png;base64,{encoded_img}" alt="Matplotlib Graph">'
+    return graph_html, name[0], x
     
 
 def frequent_words(df, selected_user):
@@ -121,13 +121,13 @@ def frequent_words(df, selected_user):
 
     plt.imshow(wordcloud, interpolation='bilinear', alpha=0.8)
     plt.axis('off')
-    img_data = BytesIO()
-    plt.savefig(img_data, format='png', bbox_inches='tight', pad_inches=0)
-    img_data.seek(0)
-    encoded_img = base64.b64encode(img_data.getvalue()).decode('utf-8')
-    img_html = f'<img src="data:image/png;base64,{encoded_img}" alt="Matplotlib Graph">'
+    graph_data = BytesIO()
+    plt.savefig(graph_data, format='png', bbox_inches='tight', pad_inches=0)
+    graph_data.seek(0)
+    encoded_img = base64.b64encode(graph_data.getvalue()).decode('utf-8')
+    graph_html = f'<img src="data:image/png;base64,{encoded_img}" alt="Matplotlib Graph">'
 
-    return img_html, common_words
+    return graph_html, common_words
 
 
 def most_common_emoji(selected_user,df):
@@ -144,3 +144,42 @@ def most_common_emoji(selected_user,df):
     for i in Counter(emojis).most_common(5):
         top_emojis[emoji.emojize(i[0])] = i[1]
     return top_emojis
+
+def monthly_timeline(selected_user,df):
+
+    if selected_user != 'all':
+        df = df[df['user'] == selected_user]
+
+    time_df = df.groupby(['year', 'month_num', 'month']).count()['message'].reset_index()
+
+    time = []
+    for i in range(time_df.shape[0]):
+        time.append(time_df['month'][i] + " " + str(time_df['year'][i]))
+
+    time_df['time_period'] = time
+
+    beginning = time_df.iloc[0,3]
+    ending = time_df.iloc[time_df.shape[0]-1,3]
+    st_month = int(time_df.iloc[0,1])
+    end_month = int(time_df.iloc[time_df.shape[0]-1,1])
+    gap_m = abs(st_month - end_month)
+    gap_m = str(gap_m) + ' Months' if gap_m else ''
+    gap_y = int(time_df.iloc[time_df.shape[0]-1,0]) - int(time_df.iloc[0,0])
+
+    if beginning > ending:
+        conclusion = f"{selected_user} lost their interest from {beginning} to {ending} messages in {gap_y} Years {gap_m}"
+    else:
+        conclusion = f"{selected_user} gained interest from {beginning} to {ending} messages in {gap_y} Years {gap_m} "
+
+    fig, ax = plt.subplots()
+    ax.plot(time_df['time_period'], time_df['message'], color='white')
+    plt.ylabel('No. of Messages ')
+    plt.xlabel('Time Period')
+    plt.xticks(rotation='vertical')
+    plt.tight_layout()
+    graph_data = BytesIO()
+    plt.savefig(graph_data, format='png', transparent=True)
+    graph_data.seek(0)
+    encoded_img = base64.b64encode(graph_data.getvalue()).decode('utf-8')
+    graph_html = f'<img src="data:image/png;base64,{encoded_img}" alt="Matplotlib Graph">'
+    return graph_html, conclusion

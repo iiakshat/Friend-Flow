@@ -102,16 +102,19 @@ def perform_analysis():
         wordcloud_image, freq_words = frequent_words(df, None)
     else:
         wordcloud_image, freq_words = frequent_words(df, selected_user)
+
     countr = freq_words
     freq_words = dict(freq_words.most_common(20))
     top_emojis = most_common_emoji(selected_user, df)
+    month_timeline, mon_summary = monthly_timeline(selected_user, df)
 
     delete_saved_file()
     cache[selected_user] = render_template('analyze.html', unique_users=unique_users, 
                            results={'msgs': msgs, 'links': links, 'media': media}, 
                            selected_user=selected_user_display, graph_html=graph_html, 
                            busiest=busiest, wordcloud_image=wordcloud_image, 
-                           freq_words = freq_words, top_emojis=top_emojis)
+                           freq_words = freq_words, top_emojis=top_emojis, 
+                           month_timeline=month_timeline, mon_summary=mon_summary)
     
     return cache[selected_user]
 

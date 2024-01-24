@@ -5,7 +5,9 @@ def dateConversion(df):
     df['hr'] = df.date.dt.hour
     df['min'] = df.date.dt.minute
     df['day'] = df.date.dt.day
+    df['day_name'] = df['date'].dt.day_name()
     df['month'] = df.date.dt.month_name()
+    df['month_num'] = df['date'].dt.month
     df['year'] = df.date.dt.year
 
 def userSeperator(df):
@@ -58,7 +60,7 @@ def preprocess(filename):
     dateConversion(df)
     userSeperator(df)
 
-    df.drop(columns=['date','messages'], inplace=True)
+    df.drop(columns=['messages'], inplace=True)
     return df
 
 # with open('./Data/flipkart.txt', 'r', encoding='utf-8') as f:
