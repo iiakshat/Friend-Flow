@@ -117,6 +117,8 @@ select:focus {
     margin-left: 160px;
     transition: transform 0.3s ease-in-out;
     transform-origin: right center; 
+    margin-bottom: 20px;
+    cursor: pointer;
 }
 
 .wordcloud-container {
@@ -172,7 +174,7 @@ select:focus {
     box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.35);
     background-color: #b1cd8525;
     backdrop-filter: blue(10px);
-    margin-bottom: 50px;
+    margin-bottom: 10px;
 }
 
 .frequent-words-container {

@@ -32,7 +32,7 @@
     <div class="container hidden-container" style="padding: 0;">
         {% if results %}
         <div id="analysis-results" style="text-align: center; margin-top: 20px;">
-            <div class="result-tab" onmouseover="showResult('{{ results.msgs }}')" onmouseout="hideResult()">Messages
+            <div class="result-tab" onmouseover="showResult('{{ results.msgs }}')" onmouseout="hideResult()" data-target="word-container">Messages
             </div>
             <div class="result-tab" onmouseover="showResult('{{ results.media }}')" onmouseout="hideResult()">Media
                 Shared</div>
@@ -51,12 +51,13 @@
             {{ graph_html | safe }}
         </div>
 
+        <h3 style="text-align: center;">
         {% if selected_user %}
-        <p style="text-align: center; width: 550px;">{{ busiest }}
-        </p>
+        {{ busiest }}
         {% endif %}
+    </h3>
     </div>
-
+    
     <div class="container hidden-container" 
     style="max-width: 900px; {% if not selected_user %}display: none;{% endif %}">
 
@@ -86,7 +87,17 @@
             </div>
         </div>
     </div>
+    
+    <div class="container hidden-container"
+        style="max-width: 900px; {% if not selected_user %}display: none;{% endif %}">
 
+        <h2 class="sub-heading"> Activity Insight </h2>
+        <div class="graph-container" id="graph-container">
+            {{ month_timeline | safe }}
+        </div>
+        <h3 style="justify-content: center; text-align: center;">
+         {{ mon_summary }}</h3>
+    </div>
 
     <script>
         function changeColor(select) {
@@ -113,6 +124,15 @@
             }
         }
         
+        const divs = document.querySelectorAll('.result-tab');
+        
+        divs.forEach((div, index) => {
+          div.addEventListener('click', () => {
+            const container = document.querySelectorAll('.container')[index];
+            container.scrollIntoView({ behavior: "smooth" });
+          });
+        });
+
         function searchWord() {
         var searchTerm = $('#searchTerm').val();
         if (searchTerm.trim() !== '') {
