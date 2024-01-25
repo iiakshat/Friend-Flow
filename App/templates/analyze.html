@@ -29,21 +29,22 @@
         </form>
     </div>
 
-    <div class="container hidden-container" style="padding: 0;">
+    <div class="container" style="padding: 0;">
         {% if results %}
         <div id="analysis-results" style="text-align: center; margin-top: 20px;">
-            <div class="result-tab" onmouseover="showResult('{{ results.msgs }}')" onmouseout="hideResult()" data-target="word-container">Messages
+            <div class="result-tab" onmouseover="showResult('{{ results.msgs }}')" onmouseout="hideResult()" data-target="words-container">Messages
             </div>
             <div class="result-tab" onmouseover="showResult('{{ results.media }}')" onmouseout="hideResult()">Media
-                Shared</div>
+            </div>
             <div class="result-tab" onmouseover="showResult('{{ results.links }}')" onmouseout="hideResult()">Links
             </div>
-            <div id="result-display" class="sub-heading-display"></div>
+            <div id="result-display" class="sub-heading-display" 
+            style="margin-bottom: 20px;"></div>
         </div>
         {% endif %}
     </div>
 
-    <div class="container hidden-container"
+    <div class="container"
         style="max-width: 900px; {% if not selected_user %}display: none;{% endif %}">
 
         <h2 class="sub-heading"> Most Busy Users </h2>
@@ -58,7 +59,7 @@
     </h3>
     </div>
     
-    <div class="container hidden-container" 
+    <div class="container" id="words-container" 
     style="max-width: 900px; {% if not selected_user %}display: none;{% endif %}">
 
         <h2 class="sub-heading"> Most Common Words </h2>
@@ -88,7 +89,7 @@
         </div>
     </div>
     
-    <div class="container hidden-container"
+    <div class="container"
         style="max-width: 900px; {% if not selected_user %}display: none;{% endif %}">
 
         <h2 class="sub-heading"> Activity Insight </h2>
@@ -128,7 +129,8 @@
         
         divs.forEach((div, index) => {
           div.addEventListener('click', () => {
-            const container = document.querySelectorAll('.container')[index];
+            const target = div.dataset.target;
+            const container = document.getElementById(target);
             container.scrollIntoView({ behavior: "smooth" });
           });
         });
