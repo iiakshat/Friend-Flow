@@ -59,15 +59,7 @@ def analyze(filepath):
     global df, unique_users
     with open(filepath, 'r', encoding='utf-8') as f:
         file = f.read()
-    chat_len = len(file)
-    threshold = 3_00_000
-    if chat_len > threshold:
-        start_len = chat_len - threshold
-        file = file[start_len:]
-        pattern = '([\w\W]+?):\s'
-        res = re.search(pattern, file)
-        file = file[res.start():]
-
+        
     df = preprocess(file)
     unique_users = df['user'].unique().tolist()
     return render_template('analyze.html', unique_users=unique_users, freq_words={}, top_emojis={})
