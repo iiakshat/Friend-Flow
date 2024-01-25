@@ -101,13 +101,15 @@ def frequent_words(df, selected_user):
                                              'null\n', '\n'
                                              ])]
 
-    new_df['message'] = textPreprocess(new_df['message'], stopwords)
-    final = removeContacts(new_df.message.str.cat(sep=' '))
-    common_words = Counter(final.split(' '))
+    total_words = textPreprocess(new_df['message'], stopwords)
 
-    ''' Whenever a user shares a contact with a friend the contact is 
-        shared as contact.vsf file. We don't want this to be considered
-        for analysis, so we'll have to remove this. '''
+    #   Whenever a user shares a contact with a friend the contact is 
+    #   shared as contact.vsf file. We don't want this to be considered
+    #   for analysis, so we'll have to remove this.
+
+    final = removeContacts(' '.join(total_words))
+
+    common_words = Counter(final.split(' '))
 
     wordcloud = WordCloud(width=500, 
                    height=500, 
@@ -167,9 +169,25 @@ def monthly_timeline(selected_user,df):
     gap_y = int(time_df.iloc[time_df.shape[0]-1,0]) - int(time_df.iloc[0,0])
 
     if beginning > ending:
-        conclusion = f"{selected_user} lost their interest from {beginning} to {ending} messages in {gap_y} Years {gap_m}"
+        if df.user.unique().shape[0] >3 and selected_user != 'all':
+            conclusion = f"{selected_user} lost their interest from {beginning} to {ending} messages in {gap_y} Years {gap_m}"
+
+        else:
+            if df.user.unique().shape[0] <4:
+                selected_user = 'Both of you lost your'
+            else:
+                selected_user = 'All the users lost their'
+            conclusion = f"{selected_user} interest from {beginning} to {ending} messages in {gap_y} Years {gap_m}"
+            
     else:
-        conclusion = f"{selected_user} gained interest from {beginning} to {ending} messages in {gap_y} Years {gap_m} "
+        if df.user.unique().shape[0] >3 and selected_user != 'all':
+            conclusion = f"{selected_user} gained interest from {beginning} to {ending} messages in {gap_y} Years {gap_m} "
+        else:
+            if df.user.unique().shape[0] <4:
+                selected_user = 'Both of you'
+            else:
+                selected_user = 'All the users'
+            conclusion = f"{selected_user} gained interest from {beginning} to {ending} messages in {gap_y} Years {gap_m} "
 
     fig, ax = plt.subplots()
     ax.plot(time_df['time_period'], time_df['message'], color='white')
