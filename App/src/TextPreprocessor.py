@@ -25,7 +25,7 @@ def removePunc(text):
 
 # CONTACTS :
 def removeContacts(text):
-    p =re.compile(r"[A-z0-9+]*\.vcf\s\([a-z]*\s[a-z]*\)")
+    p = re.compile(r"[a-zA-Z0-9]* [A-z0-9]*\.vcf\s\(file attached\)")
     return p.sub(r'', text)
     
 # FINAL :
@@ -40,5 +40,5 @@ def textPreprocess(messages, stopwords):
         for word in final_msg:
             if word not in stopwords:
                 processed_msgs.append(word)
-                                                        
-    return ' '.join(processed_msgs)
+
+    return processed_msgs
