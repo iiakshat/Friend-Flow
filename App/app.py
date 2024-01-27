@@ -62,7 +62,8 @@ def analyze(filepath):
         
     df = preprocess(file)
     unique_users = df['user'].unique().tolist()
-    return render_template('analyze.html', unique_users=unique_users, freq_words={}, top_emojis={})
+    return render_template('analyze.html', unique_users=unique_users, 
+                           freq_words={}, top_emojis={}, results={}, graphs={})
 
 
 @app.route("/perform_analysis", methods=["POST"])
@@ -75,10 +76,10 @@ def perform_analysis():
     
     if selected_user == 'all':
         selected_user_display = "All Users"
-        msgs, links, media = counter(None, df)
+        msgs, links, media, max_msg = counter(None, df)
     else:
         selected_user_display = selected_user
-        msgs, links, media = counter(selected_user, df)
+        msgs, links, media, max_msg = counter(selected_user, df)
     
     graph_html, busiest, x = most_busy_users(selected_user, df)
     if len(unique_users)>3:
@@ -94,19 +95,21 @@ def perform_analysis():
         wordcloud_image, freq_words = frequent_words(df, None)
     else:
         wordcloud_image, freq_words = frequent_words(df, selected_user)
-
+    
+    if not wordcloud_image:
+        wordcloud_image = 'static/images/wordcloud.png'
+        
     countr = freq_words
     freq_words = dict(freq_words.most_common(20))
     top_emojis = most_common_emoji(selected_user, df)
-    month_timeline, mon_summary = monthly_timeline(selected_user, df)
+    graphs = activity(selected_user, df)
 
     delete_saved_file()
     cache[selected_user] = render_template('analyze.html', unique_users=unique_users, 
-                           results={'msgs': msgs, 'links': links, 'media': media}, 
+                           results={'msgs': msgs, 'links': links, 'media': media, 'max_msg': max_msg}, 
                            selected_user=selected_user_display, graph_html=graph_html, 
                            busiest=busiest, wordcloud_image=wordcloud_image, 
-                           freq_words = freq_words, top_emojis=top_emojis, 
-                           month_timeline=month_timeline, mon_summary=mon_summary)
+                           freq_words = freq_words, top_emojis=top_emojis, graphs=graphs)
     
     return cache[selected_user]
 
