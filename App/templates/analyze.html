@@ -15,6 +15,8 @@
 </head>
 
 <body>
+
+<!-- Container 1 : User selection :  -->
     <div class="container" id="select-container">
         <h1>Friend Flow 📈</h1>
         <form action="{{ url_for('perform_analysis') }}" method="post" id="analysis-form">
@@ -29,6 +31,8 @@
         </form>
     </div>
 
+
+<!-- Container 2 : Count Display :  -->
     <div class="container" style="padding: 0;">
         {% if results %}
         <div id="analysis-results" style="text-align: center; margin-top: 20px;">
@@ -38,12 +42,16 @@
             </div>
             <div class="result-tab" onmouseover="showResult('{{ results.links }}')" onmouseout="hideResult()">Links
             </div>
+            <div class="result-tab" onmouseover="showResult('{{ results.max_msg }}')" onmouseout="hideResult()">Longest Message
+            </div>
             <div id="result-display" class="sub-heading-display" 
             style="margin-bottom: 20px;"></div>
         </div>
         {% endif %}
     </div>
 
+
+<!-- Container 3 : Busiest User :  -->
     <div class="container"
         style="max-width: 900px; {% if not selected_user %}display: none;{% endif %}">
 
@@ -51,120 +59,152 @@
         <div class="graph-container" id="graph-container">
             {{ graph_html | safe }}
         </div>
+        <p style="text-align: center;">
+            {{ busiest }}</p>
+</div>
 
-        <h3 style="text-align: center;">
-        {% if selected_user %}
-        {{ busiest }}
-        {% endif %}
-    </h3>
-    </div>
-    
-    <div class="container" id="words-container" 
+
+<!-- Container 4 : Word frequency :  -->
+<div class="container" id="words-container" 
     style="max-width: 900px; {% if not selected_user %}display: none;{% endif %}">
+    <h2 class="sub-heading"> Most Common Words </h2>
 
-        <h2 class="sub-heading"> Most Common Words </h2>
-
-        <div class="wordcloud-container">
-            {{ wordcloud_image | safe }}
-        </div>
-        <div class="frequent-words-container">
-            <div class="word-container">
+    <!-- Inner Container 1 : Wordcloud : -->
+    <div class="wordcloud-container">
+        {{ wordcloud_image | safe }}</div>
+        
+        
+    <!-- Inner Container 2 : Frequent Words : -->
+    <div class="frequent-words-container">
+        <div class="word-container">
             <div id="search-container">
-            <input class="search_word" type="text" id="searchTerm" placeholder="Enter a word here.">
-            <button id="searchButton" onmouseover="searchWord()" class="count_word_btn">Hover Here</button></div>
-            {% for word, count in freq_words.items() %}
-            <button class="word-count-btn" onmouseover="showCount('{{ word.capitalize() }}', '{{ count }}')" onmouseout="hideCount()">{{ word.capitalize() }}</button>
-            {% endfor %}
-            </div>
-        </div>
-        <div class="frequent-words-container" style="margin-bottom: 80px;">
-            <h3 style="text-align: center;"> Most Used Emojis</h3>
-            <div class="word-container">
-            {% for emoji, count in top_emojis.items() %}
-            <button class="word-count-btn" onmouseover="showCount('{{ emoji | escape }}', '{{ count }}')" onmouseout="hideCount()">{{ emoji | escape }}</button>
-            {% endfor %}
-            </div>
-            <div id="word-count-display" class="sub-heading-display" style="display: none;"></div>
-            </div>
-        </div>
-    </div>
+                <input class="search_word" type="text" id="searchTerm" placeholder="Enter a word here.">
+                <button id="searchButton" onmouseover="searchWord()" class="count_word_btn">Hover Here</button></div>
+                {% for word, count in freq_words.items() %}
+                <button class="word-count-btn" onmouseover="showCount('{{ word.capitalize() }}', '{{ count }}')" onmouseout="hideCount()">{{ word.capitalize() }}</button>
+        {% endfor %}
+    </div></div>
     
-    <div class="container"
-        style="max-width: 900px; {% if not selected_user %}display: none;{% endif %}">
-
-        <h2 class="sub-heading"> Activity Insight </h2>
-        <div class="graph-container" id="graph-container">
-            {{ month_timeline | safe }}
+    <!-- Inner Container 3 : Frequent Emojis : -->
+    <div class="frequent-words-container" style="margin-bottom: 80px;">
+        {% if top_emojis %}
+        <h3 style="text-align: center;"> Most Used Emojis</h3>
+        {% endif %}
+        <div class="word-container">
+        {% for emoji, count in top_emojis.items() %}
+        <button class="word-count-btn" onmouseover="showCount('{{ emoji | escape }}', '{{ count }}')" onmouseout="hideCount()">{{ emoji | escape }}</button>
+        {% endfor %}
         </div>
-        <h3 style="justify-content: center; text-align: center;">
-         {{ mon_summary }}</h3>
+        <div id="word-count-display" class="sub-heading-display" style="display: none;"></div>
+        </div>
+    </div>
+</div>
+    
+
+<!-- Container 5 : Activity Insight :  -->
+<div class="container"
+    style="max-width: 900px; {% if not selected_user %}display: none;{% endif %}">
+    
+    <h2 class="sub-heading"> Activity Insight </h2>
+    {% if unique_users.__len__()>3 %}
+    <h3 style="justify-content: center; text-align: center;">
+        Total Number of Users : {{ unique_users.__len__()-1}}
+    </h3>
+    {% endif %}
+
+    <!-- Inner Container 1 : Graph - Month Wise : -->
+    <div class="graph-container" id="graph-container">
+        {{ graphs.month_wise | safe }}
     </div>
 
-    <script>
-        function changeColor(select) {
-            var selectedOption = select.options[select.selectedIndex];
-            selectedOption.style.color = 'black';
-        }
-        
-        function submitForm() {
-            document.getElementById('analysis-form').submit();
-        }
-        
-        function showResult(result) {
-            var resultDisplay = document.getElementById('result-display');
-            if (resultDisplay) {
-                resultDisplay.innerText = result;
-                resultDisplay.style.display = 'block';
-            }
-        }
-        
-        function hideResult() {
-            var resultDisplay = document.getElementById('result-display');
-            if (resultDisplay) {
-                resultDisplay.style.display = 'none';
-            }
-        }
-        
-        const divs = document.querySelectorAll('.result-tab');
-        
-        divs.forEach((div, index) => {
-          div.addEventListener('click', () => {
-            const target = div.dataset.target;
-            const container = document.getElementById(target);
-            container.scrollIntoView({ behavior: "smooth" });
-          });
-        });
+    <!-- Inner Container 2 : Graph - Daily : -->
+    <div class="graph-container" id="graph-container">
+        {{ graphs.daily | safe }}
+    </div>
 
-        function searchWord() {
-        var searchTerm = $('#searchTerm').val();
-        if (searchTerm.trim() !== '') {
-        $.get('/get_word_counts', function(countr) {
-            var resultDisplay = $('#word-count-display');
-            var count = countr[searchTerm.toLowerCase()] || 0;
-            resultDisplay.text(searchTerm + ' was used ' + count + 'times.');
-            resultDisplay.css('display', 'block');
-            resultDisplay.css('margin-top', '30px');
-        });
-    } else {
-        $('#searchButton').prop('disabled', true);
+    <!-- Inner Container 3 : Graph - Weekly : -->
+    <div class="graph-container" id="graph-container">
+        {{ graphs.weekly | safe }}
+    </div>
+
+    <!-- Inner Container 4 : Graph - Monthly : -->
+    <div class="graph-container" id="graph-container">
+        {{ graphs.monthly | safe }}
+    </div>
+
+    <h3 style="justify-content: center; text-align: center;">
+        {{ graphs.conclusion }}
+    </h3>
+    
+</div>
+
+
+<!-- Scripts :  -->
+<script>
+    function changeColor(select) {
+        var selectedOption = select.options[select.selectedIndex];
+        selectedOption.style.color = 'black';
     }
+    
+    function submitForm() {
+        document.getElementById('analysis-form').submit();
+    }
+    
+    function showResult(result) {
+        var resultDisplay = document.getElementById('result-display');
+        if (resultDisplay) {
+            resultDisplay.innerText = result;
+            resultDisplay.style.display = 'block';
+        }
+    }
+    
+    function hideResult() {
+        var resultDisplay = document.getElementById('result-display');
+        if (resultDisplay) {
+            resultDisplay.style.display = 'none';
+        }
+    }
+    
+    const divs = document.querySelectorAll('.result-tab');
+    
+    divs.forEach((div, index) => {
+        div.addEventListener('click', () => {
+        const target = div.dataset.target;
+        const container = document.getElementById(target);
+        container.scrollIntoView({ behavior: "smooth" });
+        });
+    });
+
+    function searchWord() {
+    var searchTerm = $('#searchTerm').val();
+    if (searchTerm.trim() !== '') {
+    $.get('/get_word_counts', function(countr) {
+        var resultDisplay = $('#word-count-display');
+        var count = countr[searchTerm.toLowerCase()] || 0;
+        resultDisplay.text(searchTerm + ' was used ' + count + 'times.');
+        resultDisplay.css('display', 'block');
+        resultDisplay.css('margin-top', '30px');
+    });
+} else {
+    $('#searchButton').prop('disabled', true);
+}
+}
+
+    function showCount(word, count) {
+        var wordCountDisplay = document.getElementById('word-count-display');
+        if (wordCountDisplay) {
+            wordCountDisplay.innerText = `${word} was used ${count} times.`;
+            wordCountDisplay.style.display = 'block';
+        }
     }
 
-        function showCount(word, count) {
-            var wordCountDisplay = document.getElementById('word-count-display');
-            if (wordCountDisplay) {
-                wordCountDisplay.innerText = `${word} was used ${count} times.`;
-                wordCountDisplay.style.display = 'block';
-            }
+    function hideCount() {
+        var wordCountDisplay = document.getElementById('word-count-display');
+        if (wordCountDisplay) {
+            wordCountDisplay.style.display = 'none';
         }
-
-        function hideCount() {
-            var wordCountDisplay = document.getElementById('word-count-display');
-            if (wordCountDisplay) {
-                wordCountDisplay.style.display = 'none';
-            }
-        }
-    </script>
+    }
+</script>
 </body>
 
 </html>
