@@ -14,23 +14,27 @@ links = []
 def counter(user, df):
     global links
     if user:
+        m = 0
         df2 = df[df['user']==user]
         msgs = df2.shape[0]
         for sentence in df2['message']:
+            m = max(m, len(sentence))
             link = extractUrl(sentence)
             if link:
                 links.extend(link)
         media = df2['media'].sum()
-        return msgs, len(links), media
+        return msgs, len(links), media, m
 
     else:
+        m = 0
         msgs = df.shape[0]
         media = df['media'].sum()
         for sentence in df['message']:
+            m = max(m, len(sentence))
             link = extractUrl(sentence)
             if link:
                 links.extend(link)
-        return msgs, len(links), media
+        return msgs, len(links), media, m
 
 
 def most_busy_users(suser, df):
@@ -107,9 +111,12 @@ def frequent_words(df, selected_user):
     #   shared as contact.vsf file. We don't want this to be considered
     #   for analysis, so we'll have to remove this.
 
+    if len(total_words) < 4:
+        return None, {}
+    
     final = removeContacts(' '.join(total_words))
-
     common_words = Counter(final.split(' '))
+
 
     wordcloud = WordCloud(width=500, 
                    height=500, 
@@ -147,12 +154,17 @@ def most_common_emoji(selected_user,df):
         top_emojis[emoji.emojize(i[0])] = i[1]
     return top_emojis
 
-def monthly_timeline(selected_user,df):
+def activity(selected_user,df):
 
     if selected_user != 'all':
         df = df[df['user'] == selected_user]
 
+    df['date_only'] = df['date'].dt.date
+
     time_df = df.groupby(['year', 'month_num', 'month']).count()['message'].reset_index()
+    daily_timeline = df.groupby('date_only').count()['message'].reset_index()
+    weekly_active = df['day_name'].value_counts()
+    monthly_active = df['month'].value_counts()
 
     time = []
     for i in range(time_df.shape[0]):
@@ -160,6 +172,7 @@ def monthly_timeline(selected_user,df):
 
     time_df['time_period'] = time
 
+    # Making Conclusion based on the Activity :
     beginning = time_df.iloc[0,3]
     ending = time_df.iloc[time_df.shape[0]-1,3]
     st_month = int(time_df.iloc[0,1])
@@ -169,7 +182,7 @@ def monthly_timeline(selected_user,df):
     gap_y = int(time_df.iloc[time_df.shape[0]-1,0]) - int(time_df.iloc[0,0])
 
     if beginning > ending:
-        if df.user.unique().shape[0] >3 and selected_user != 'all':
+        if selected_user != 'all':
             conclusion = f"{selected_user} lost their interest from {beginning} to {ending} messages in {gap_y} Years {gap_m}"
 
         else:
@@ -180,24 +193,58 @@ def monthly_timeline(selected_user,df):
             conclusion = f"{selected_user} interest from {beginning} to {ending} messages in {gap_y} Years {gap_m}"
             
     else:
-        if df.user.unique().shape[0] >3 and selected_user != 'all':
+        if selected_user != 'all':
             conclusion = f"{selected_user} gained interest from {beginning} to {ending} messages in {gap_y} Years {gap_m} "
+        
         else:
             if df.user.unique().shape[0] <4:
                 selected_user = 'Both of you'
             else:
                 selected_user = 'All the users'
-            conclusion = f"{selected_user} gained interest from {beginning} to {ending} messages in {gap_y} Years {gap_m} "
+            conclusion = f"{selected_user} gained interest from {beginning} to {ending} messages in {gap_y} Years {gap_m}"
 
+    time_df_img = generate_encoded_image(time_df, 'time_period', 'message', 'No. of Messages', 'Time Period')
+    daily_timeline_img = generate_encoded_image(daily_timeline, 'date_only', 'message', 'No. of Messages', 'Time Period')
+    weekly_active_img = generate_encoded_bar_chart(weekly_active, 'Weekly Active Users', 'Days', 'No. of Messages')
+    monthly_active_img = generate_encoded_bar_chart(monthly_active, 'Monthly Active Users', 'Months', 'No. of Messages')
+
+    graphs = {'month_wise': time_df_img, 
+              'daily' : daily_timeline_img, 
+              'weekly' : weekly_active_img,
+              'monthly' : monthly_active_img, 
+              'conclusion' : conclusion}
+
+    return graphs
+
+
+def generate_encoded_image(df, x_col, y_col, y_label, x_label):
     fig, ax = plt.subplots()
-    ax.plot(time_df['time_period'], time_df['message'], color='white')
-    plt.ylabel('No. of Messages ')
-    plt.xlabel('Time Period')
+    ax.plot(df[x_col], df[y_col], color='white')
+    plt.ylabel(y_label)
+    plt.xlabel(x_label)
     plt.xticks(rotation='vertical')
     plt.tight_layout()
+
     graph_data = BytesIO()
     plt.savefig(graph_data, format='png', transparent=True)
     graph_data.seek(0)
     encoded_img = base64.b64encode(graph_data.getvalue()).decode('utf-8')
     graph_html = f'<img src="data:image/png;base64,{encoded_img}" alt="Matplotlib Graph">'
-    return graph_html, conclusion
+    
+    return graph_html
+
+def generate_encoded_bar_chart(series, title, x_label, y_label):
+    fig, ax = plt.subplots()
+    ax.bar(series.index, series.values, color='white')
+    plt.title(title)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.tight_layout()
+
+    graph_data = BytesIO()
+    plt.savefig(graph_data, format='png', transparent=True)
+    graph_data.seek(0)
+    encoded_img = base64.b64encode(graph_data.getvalue()).decode('utf-8')
+    graph_html = f'<img src="data:image/png;base64,{encoded_img}" alt="Matplotlib Graph">'
+
+    return graph_html
