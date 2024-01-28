@@ -42,8 +42,9 @@
             </div>
             <div class="result-tab" onmouseover="showResult('{{ results.links }}')" onmouseout="hideResult()">Links
             </div>
-            <div class="result-tab" onmouseover="showResult('{{ results.max_msg }}')" onmouseout="hideResult()">Longest Message
-            </div>
+            <div class="result-tab" onmouseover="showResult('{{ results.longest_msg.__len__() }}')" onmouseout="hideResult()"
+             data-target="longest_msg">Longest Message </div>
+             
             <div id="result-display" class="sub-heading-display" 
             style="margin-bottom: 20px;"></div>
         </div>
@@ -76,13 +77,15 @@
         
     <!-- Inner Container 2 : Frequent Words : -->
     <div class="frequent-words-container">
+        {% if freq_words %}
         <div class="word-container">
             <div id="search-container">
                 <input class="search_word" type="text" id="searchTerm" placeholder="Enter a word here.">
                 <button id="searchButton" onmouseover="searchWord()" class="count_word_btn">Hover Here</button></div>
                 {% for word, count in freq_words.items() %}
                 <button class="word-count-btn" onmouseover="showCount('{{ word.capitalize() }}', '{{ count }}')" onmouseout="hideCount()">{{ word.capitalize() }}</button>
-        {% endfor %}
+                {% endfor %}
+        {% endif %}
     </div></div>
     
     <!-- Inner Container 3 : Frequent Emojis : -->
@@ -105,39 +108,50 @@
 <div class="container"
     style="max-width: 900px; {% if not selected_user %}display: none;{% endif %}">
     
+    
+    <!-- Inner Container 1 : Graph - Month Wise : -->
+    <div class="graph-container time_graph" id="graph-container">
+        {{ graphs.month_wise | safe }}
+    </div>
+
+    <!-- Inner Container 2 : Graph - Daily : -->
+    <div class="graph-container time_graph" id="graph-container">
+        {{ graphs.daily | safe }}
+    </div>
+
+    <!-- Inner Container 3 : Graph - Weekly : -->
+    <div class="graph-container time_graph" id="graph-container">
+        {{ graphs.weekly | safe }}
+    </div>
+
+    <!-- Inner Container 4 : Graph - Monthly : -->
+    <div class="graph-container time_graph" id="graph-container">
+        {{ graphs.monthly | safe }}
+    </div>
+    
+    <h3 style="justify-content: center; text-align: center;">
+        {{ graphs.conclusion }}
+    </h3>
+
     <h2 class="sub-heading"> Activity Insight </h2>
     {% if unique_users.__len__()>3 %}
     <h3 style="justify-content: center; text-align: center;">
         Total Number of Users : {{ unique_users.__len__()-1}}
     </h3>
     {% endif %}
-
-    <!-- Inner Container 1 : Graph - Month Wise : -->
-    <div class="graph-container" id="graph-container">
-        {{ graphs.month_wise | safe }}
-    </div>
-
-    <!-- Inner Container 2 : Graph - Daily : -->
-    <div class="graph-container" id="graph-container">
-        {{ graphs.daily | safe }}
-    </div>
-
-    <!-- Inner Container 3 : Graph - Weekly : -->
-    <div class="graph-container" id="graph-container">
-        {{ graphs.weekly | safe }}
-    </div>
-
-    <!-- Inner Container 4 : Graph - Monthly : -->
-    <div class="graph-container" id="graph-container">
-        {{ graphs.monthly | safe }}
-    </div>
-
-    <h3 style="justify-content: center; text-align: center;">
-        {{ graphs.conclusion }}
-    </h3>
     
 </div>
 
+
+<!-- Container 6 : Result for links & Longest Message :  -->
+<div class="container"
+    style="max-width: 900px; {% if not selected_user %}display: none;{% endif %} padding-bottom: 100px;">
+
+    <h2 class="sub-heading"> Longest Message </h2>
+    <div class="longest_msg" id="longest_msg">
+        {{ results.longest_msg }}
+    </div>
+</div>
 
 <!-- Scripts :  -->
 <script>
