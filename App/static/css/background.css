@@ -1,6 +1,7 @@
 html, body {
     width: 100%;
-    height:100%;
+    height: 100%;
+    min-height: 100%;
   }
 
 @font-face {
@@ -10,10 +11,12 @@ src: url(../font/Grandstander-SemiBold.ttf);
 
 body {
     background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-    background-size: 400% 1000%;
+    background-size: 400% 100%;
+    background-attachment: fixed;
     animation: gradient 20s ease infinite;
     font-family: 'Grandstander', 'sans-sarif';
     letter-spacing: 1px;
+    margin: 0;
 }
 
 @keyframes gradient {
