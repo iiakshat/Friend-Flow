@@ -14,27 +14,33 @@ links = []
 def counter(user, df):
     global links
     if user:
-        m = 0
+        longest_msg = ''
         df2 = df[df['user']==user]
         msgs = df2.shape[0]
+        media = df2['media'].sum()
+        
         for sentence in df2['message']:
-            m = max(m, len(sentence))
+            if len(sentence) > len(longest_msg):
+                longest_msg = sentence
             link = extractUrl(sentence)
             if link:
                 links.extend(link)
-        media = df2['media'].sum()
-        return msgs, len(links), media, m
+
+        return msgs, len(links), media, longest_msg
 
     else:
-        m = 0
+        longest_msg = ''
         msgs = df.shape[0]
         media = df['media'].sum()
+
         for sentence in df['message']:
-            m = max(m, len(sentence))
+            if len(sentence) > len(longest_msg):
+                longest_msg = sentence
             link = extractUrl(sentence)
             if link:
                 links.extend(link)
-        return msgs, len(links), media, m
+
+        return msgs, len(links), media, longest_msg
 
 
 def most_busy_users(suser, df):
@@ -203,10 +209,10 @@ def activity(selected_user,df):
                 selected_user = 'All the users'
             conclusion = f"{selected_user} gained interest from {beginning} to {ending} messages in {gap_y} Years {gap_m}"
 
-    time_df_img = generate_encoded_image(time_df, 'time_period', 'message', 'No. of Messages', 'Time Period')
-    daily_timeline_img = generate_encoded_image(daily_timeline, 'date_only', 'message', 'No. of Messages', 'Time Period')
-    weekly_active_img = generate_encoded_bar_chart(weekly_active, 'Weekly Active Users', 'Days', 'No. of Messages')
-    monthly_active_img = generate_encoded_bar_chart(monthly_active, 'Monthly Active Users', 'Months', 'No. of Messages')
+    time_df_img = generate_encoded_image(time_df, 'Monthly Activity', 'time_period', 'message', 'No. of Messages', 'Time Period')
+    daily_timeline_img = generate_encoded_image(daily_timeline, 'Daily Activity', 'date_only', 'message', 'No. of Messages', 'Time Period')
+    weekly_active_img = generate_encoded_bar_chart(weekly_active, 'Users Active Weekly', 'Days', 'No. of Users')
+    monthly_active_img = generate_encoded_bar_chart(monthly_active, 'Users Active Monthly', 'Months', 'No. of Users')
 
     graphs = {'month_wise': time_df_img, 
               'daily' : daily_timeline_img, 
@@ -217,9 +223,10 @@ def activity(selected_user,df):
     return graphs
 
 
-def generate_encoded_image(df, x_col, y_col, y_label, x_label):
+def generate_encoded_image(df, title, x_col, y_col, y_label, x_label):
     fig, ax = plt.subplots()
     ax.plot(df[x_col], df[y_col], color='white')
+    plt.title(title)
     plt.ylabel(y_label)
     plt.xlabel(x_label)
     plt.xticks(rotation='vertical')
