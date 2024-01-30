@@ -5,7 +5,7 @@ import os
 import re
 from src.Preprocessor import preprocess
 from src.Stats import *
-
+from src.Response_time import average_reply_time
 
 
 app = Flask(__name__, static_url_path='/static')
@@ -65,7 +65,7 @@ def analyze(filepath):
     df = preprocess(file)
     unique_users = df['user'].unique().tolist()
     return render_template('analyze.html', unique_users=unique_users, 
-                           freq_words={}, top_emojis={}, results={}, graphs={})
+                           freq_words={}, top_emojis={}, results={}, graphs={}, response_time={})
 
 
 @app.route("/perform_analysis", methods=["POST"])
@@ -85,6 +85,9 @@ def perform_analysis():
         msgs, links, media, longest_msg = counter(selected_user, df)
     
     graph_html, busiest, x = most_busy_users(selected_user, df)
+    fasterReply = ''
+    avg_time = {}
+
     if len(unique_users)>3:
         if busiest == selected_user or selected_user=='Zuckerberg' or selected_user=='all':
             busiest = busiest + ' did highest number of Messages.'
@@ -93,6 +96,13 @@ def perform_analysis():
 
     else:
         busiest = busiest + ' did more Messages.'
+        temp_df = df[df['user'] != 'Zuckerberg'].reset_index()
+        ignore_list = ["byee", "bye", "see you", "take care", 
+                       'dhyaan rakhna', 'dhyaan rakh', 'goodbye', 'byy', 
+                       'gudnight', 'gn', 'tc', 'sweet dreams', 'tata', 'chal thik hai']
+        
+        avg_time, fasterReply = average_reply_time(temp_df, ignore_list)
+        del temp_df
 
     if selected_user == 'all':
         wordcloud_image, freq_words = frequent_words(df, None)
@@ -112,12 +122,14 @@ def perform_analysis():
         top_emojis = {}
         graphs = {}
 
+    results = {'msgs': msgs, 'links': links, 'media': media, 'longest_msg': longest_msg, 
+            'fasterReply' : fasterReply}
+    
     delete_saved_file()
-    cache[cache_key] = render_template('analyze.html', unique_users=unique_users, 
-                           results={'msgs': msgs, 'links': links, 'media': media, 'longest_msg': longest_msg}, 
+    cache[cache_key] = render_template('analyze.html', unique_users=unique_users, results=results,
                            selected_user=selected_user_display, graph_html=graph_html, 
-                           busiest=busiest, wordcloud_image=wordcloud_image, 
-                           freq_words = freq_words, top_emojis=top_emojis, graphs=graphs)
+                           busiest=busiest, wordcloud_image=wordcloud_image, response_time=avg_time,
+                           freq_words = freq_words, top_emojis=top_emojis, graphs=graphs, avg_time=avg_time)
     
     return cache[cache_key]
 
