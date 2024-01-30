@@ -151,6 +151,16 @@
     <div class="longest_msg" id="longest_msg">
         {{ results.longest_msg }}
     </div>
+    
+    {% if unique_users.__len__() < 4 %}
+    <div class="responseTime">
+        <h2 class="sub-heading"> Response Time </h2>
+        {% for user in unique_users %}
+        <h3>{{ user.capitalize() }} replies in {{ response_time[user] }} Mins. </h3>
+        {% endfor %}
+        <h3>{{ results.fasterReply }}
+    </div>
+    {% endif %}
 </div>
 
 <!-- Scripts :  -->
