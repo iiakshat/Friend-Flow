@@ -56,6 +56,7 @@ def upload():
 
     return render_template("index.html")
 
+
 @app.route("/analyze", methods=["GET"])
 def analyze(filepath):
     global df, unique_users
@@ -64,6 +65,7 @@ def analyze(filepath):
         
     df = preprocess(file)
     unique_users = df['user'].unique().tolist()
+
     return render_template('analyze.html', unique_users=unique_users, 
                            freq_words={}, top_emojis={}, results={}, graphs={}, response_time={})
 
