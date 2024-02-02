@@ -45,7 +45,7 @@ def userSeperator(df):
     df['user'] = usernames
 
 def preprocess(filename):
-    pattern = r'\d{1,2}/\d{1,2}/\d{2,4},\s\d{1,2}:\d{2}\s[a-zA-Z]+\s-\s'
+    pattern = r'\d{1,2}.\d{1,2}.\d{2,4},\s\d{1,2}:\d{2}.[a-zA-Z0-9\s]*-\s'
     texts = re.split(pattern, filename)[1:]
     dates = re.findall(pattern, filename)
 
@@ -56,7 +56,11 @@ def preprocess(filename):
 
     df = pd.DataFrame(dic)
 
-    df['date'] = pd.to_datetime(df['date'], format='%d/%m/%y, %I:%M %p - ')
+    try:
+        df['date'] = pd.to_datetime(df['date'], format='%d/%m/%y, %I:%M %p - ')
+    except:
+        df['date'] = pd.to_datetime(df['date'], format='%m/%d/%y, %H:%M - ')
+        
     dateConversion(df)
     userSeperator(df)
 

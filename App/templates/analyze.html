@@ -158,6 +158,7 @@
         {% for user in unique_users %}
         {% if user!='Zuckerberg%}
         <h3>{{ user.capitalize() }} replies in {{ response_time[user] }} Mins. </h3>
+        {% endif %}
         {% endfor %}
         <h3>{{ results.fasterReply }}
     </div>
