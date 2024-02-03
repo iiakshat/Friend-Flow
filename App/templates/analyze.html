@@ -156,7 +156,7 @@
     <div class="responseTime">
         <h2 class="sub-heading"> Response Time </h2>
         {% for user in unique_users %}
-        {% if user!='Zuckerberg%}
+        {% if user!='Zuckerberg' %}
         <h3>{{ user.capitalize() }} replies in {{ response_time[user] }} Mins. </h3>
         {% endif %}
         {% endfor %}
