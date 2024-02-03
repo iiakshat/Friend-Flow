@@ -59,7 +59,7 @@ def average_reply_time(df, ignore_list):
         if reply_time1 > reply_time2:
             conclusion = f'{b} replies {round(reply_time1 - reply_time2, 2)} Mins earlier than {a}'
         else:
-            conclusion = f'{a} replies {round(reply_time1 - reply_time2, 2)} Mins earlier than {b}'
+            conclusion = f'{a} replies {round(reply_time2 - reply_time1, 2)} Mins earlier than {b}'
 
     else:
         avg_time = 0,0
