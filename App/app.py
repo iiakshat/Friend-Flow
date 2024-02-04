@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, flash, jsonify
 from werkzeug.utils import secure_filename
 import secrets
 import os
-import re
 from src.Preprocessor import preprocess
 from src.Stats import *
 from src.Response_time import average_reply_time
