@@ -211,8 +211,8 @@ def activity(selected_user,df):
 
     time_df_img = generate_encoded_image(time_df, 'Monthly Activity', 'time_period', 'message', 'No. of Messages', 'Time Period')
     daily_timeline_img = generate_encoded_image(daily_timeline, 'Daily Activity', 'date_only', 'message', 'No. of Messages', 'Time Period')
-    weekly_active_img = generate_encoded_bar_chart(weekly_active, 'Users Active Weekly', 'Days', 'No. of Users')
-    monthly_active_img = generate_encoded_bar_chart(monthly_active, 'Users Active Monthly', 'Months', 'No. of Users')
+    weekly_active_img = generate_encoded_bar_chart(weekly_active, 'Users Active Weekly', 'Days', 'No. of Messages')
+    monthly_active_img = generate_encoded_bar_chart(monthly_active, 'Users Active Monthly', 'Months', 'No. of Messages')
 
     graphs = {'month_wise': time_df_img, 
               'daily' : daily_timeline_img, 
