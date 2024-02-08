@@ -123,7 +123,6 @@ bas
 bta
 bata
 batao
-bc
 be
 became
 because
@@ -163,6 +162,9 @@ brief
 bro
 btw
 but
+bs
+bas
+bus
 by
 came
 can
@@ -190,6 +192,7 @@ couldnt
 couldn't
 d
 de
+dete
 dede
 dega
 degi
@@ -290,6 +293,7 @@ got
 gotten
 greetings
 guys
+h
 han
 hann
 haan
@@ -479,11 +483,14 @@ kahi
 kahin
 kahte
 kaisa
+kese
 kaise
 kaisi
 kal
 kam
 kar
+karde
+kardete
 kra
 kara
 kare
