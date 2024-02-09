@@ -13,34 +13,49 @@ links = []
 
 def counter(user, df):
     global links
+    queue = []
+    longest_msg = ''
+    msg_length = 0
+
     if user:
-        longest_msg = ''
         df2 = df[df['user']==user]
         msgs = df2.shape[0]
         media = df2['media'].sum()
         
         for sentence in df2['message']:
-            if len(sentence) > len(longest_msg):
+
+            if len(sentence) > msg_length:
                 longest_msg = sentence
+                msg_length = len(longest_msg)
+
+                if len(queue) > 2:
+                    queue.pop(0)
+                queue.append(longest_msg)
+
             link = extractUrl(sentence)
             if link:
                 links.extend(link)
 
-        return msgs, len(links), media, longest_msg
-
     else:
-        longest_msg = ''
         msgs = df.shape[0]
         media = df['media'].sum()
 
         for sentence in df['message']:
-            if len(sentence) > len(longest_msg):
+
+            if len(sentence) > msg_length:
                 longest_msg = sentence
+                msg_length = len(longest_msg)
+
+                if len(queue) > 2:
+                    queue.pop(0)
+                queue.append(longest_msg)
+
             link = extractUrl(sentence)
             if link:
                 links.extend(link)
 
-        return msgs, len(links), media, longest_msg
+    queue.append(msg_length)
+    return msgs, len(links), media, queue[::-1]
 
 
 def most_busy_users(suser, df):
@@ -162,8 +177,7 @@ def most_common_emoji(selected_user,df):
 
 def activity(selected_user,df):
 
-    if selected_user != 'all':
-        df = df[df['user'] == selected_user]
+    if selected_user != 'all': df = df[df['user'] == selected_user]
 
     df['date_only'] = df['date'].dt.date
 
@@ -179,36 +193,35 @@ def activity(selected_user,df):
     time_df['time_period'] = time
 
     # Making Conclusion based on the Activity :
-    beginning = time_df.iloc[0,3]
-    ending = time_df.iloc[time_df.shape[0]-1,3]
-    st_month = int(time_df.iloc[0,1])
-    end_month = int(time_df.iloc[time_df.shape[0]-1,1])
-    gap_m = abs(st_month - end_month)
-    gap_m = str(gap_m) + ' Months' if gap_m else ''
-    gap_y = int(time_df.iloc[time_df.shape[0]-1,0]) - int(time_df.iloc[0,0])
+    beg_Date = int(df['date_only'][0])
+    beg_Mon = str(df['month'][0])
+    beg_year = str(df['year'][0])
 
-    if beginning > ending:
-        if selected_user != 'all':
-            conclusion = f"{selected_user} lost their interest from {beginning} to {ending} messages in {gap_y} Years {gap_m}"
-
-        else:
-            if df.user.unique().shape[0] <4:
-                selected_user = 'Both of you lost your'
-            else:
-                selected_user = 'All the users lost their'
-            conclusion = f"{selected_user} interest from {beginning} to {ending} messages in {gap_y} Years {gap_m}"
-            
+    if beg_Date == 1:
+        beg_Date = '1st'
+    elif beg_Date == 2:
+        beg_Date = '2nd'
+    elif beg_Date == 3:
+        beg_Date = '3rd'
     else:
-        if selected_user != 'all':
-            conclusion = f"{selected_user} gained interest from {beginning} to {ending} messages in {gap_y} Years {gap_m} "
-        
-        else:
-            if df.user.unique().shape[0] <4:
-                selected_user = 'Both of you'
-            else:
-                selected_user = 'All the users'
-            conclusion = f"{selected_user} gained interest from {beginning} to {ending} messages in {gap_y} Years {gap_m}"
+        beg_Date = str(beg_Date) + 'th'
 
+    conclusion1 = f'You both started talking on {beg_Date} of {beg_Mon}, {beg_year}.'
+    number_of_messages = df.shape[0]
+    active_day =  weekly_active.idxmax()
+    active_time = df.groupby('day_name')['hr'].mean().idxmax()
+
+    if selected_user != 'all':
+        conclusion2 = f''' {selected_user} does {number_of_messages} Messages a day, {df['message'].apply(len).mean()} Characters long 
+                        and mostly texts on {active_day} at {active_time}. '''
+        
+    else:
+        conclusion2 = f''' Both of you send an average of {number_of_messages} Messages a day, 
+                            and mostly texts on {active_day} at {active_time}. '''
+
+    conclusion = conclusion1 + conclusion2
+
+    # Enoding the Graphs for HTML :
     time_df_img = generate_encoded_image(time_df, 'Monthly Activity', 'time_period', 'message', 'No. of Messages', 'Time Period')
     daily_timeline_img = generate_encoded_image(daily_timeline, 'Daily Activity', 'date_only', 'message', 'No. of Messages', 'Time Period')
     weekly_active_img = generate_encoded_bar_chart(weekly_active, 'Users Active Weekly', 'Days', 'No. of Messages')
