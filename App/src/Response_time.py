@@ -33,7 +33,13 @@ def average_reply_time(df, ignore_list):
             else:
                 ignore_flag = False
 
-            reply_times[row['user']].append(time_diff.total_seconds() / 60)
+            time_diff_min = time_diff.total_seconds() / 60
+            thresholdMin = 240 
+
+            if time_diff_min > thresholdMin:
+                time_diff_min = 0
+
+            reply_times[row['user']].append(time_diff_min)
             current_user_start_time = row['date']
 
         # Same user :
