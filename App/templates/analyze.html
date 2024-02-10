@@ -34,7 +34,7 @@
 
 <!-- Container 2 : Count Display :  -->
     <div class="container" style="padding: 0;">
-        {% if results %}
+        {% if results.longest_msg != [] %}
         <div id="analysis-results" style="text-align: center; margin-top: 20px;">
             <div class="result-tab" onmouseover="showResult('{{ results.msgs }}')" onmouseout="hideResult()" data-target="words-container">Messages
             </div>
@@ -42,7 +42,7 @@
             </div>
             <div class="result-tab" onmouseover="showResult('{{ results.links }}')" onmouseout="hideResult()">Links
             </div>
-            <div class="result-tab" onmouseover="showResult('{{ results.longest_msg.__len__() }}')" onmouseout="hideResult()"
+            <div class="result-tab" onmouseover="showResult('{{ results.longest_msg[0] }}')" onmouseout="hideResult()"
              data-target="longest_msg">Longest Message </div>
              
             <div id="result-display" class="sub-heading-display" 
@@ -106,24 +106,25 @@
 
 <!-- Container 5 : Activity Insight :  -->
 <div class="container"
-    style="max-width: 900px; {% if not selected_user %}display: none;{% endif %}">
-    
+style="max-width: 900px; {% if not selected_user %}display: none;{% endif %}">
+
+    <h2 class="sub-heading"> Activity Insight </h2>
     
     <!-- Inner Container 1 : Graph - Month Wise : -->
     <div class="graph-container time_graph" id="graph-container">
         {{ graphs.month_wise | safe }}
     </div>
-
+    
     <!-- Inner Container 2 : Graph - Daily : -->
     <div class="graph-container time_graph" id="graph-container">
         {{ graphs.daily | safe }}
     </div>
-
+    
     <!-- Inner Container 3 : Graph - Weekly : -->
     <div class="graph-container time_graph" id="graph-container">
         {{ graphs.weekly | safe }}
     </div>
-
+    
     <!-- Inner Container 4 : Graph - Monthly : -->
     <div class="graph-container time_graph" id="graph-container">
         {{ graphs.monthly | safe }}
@@ -132,8 +133,6 @@
     <h3 style="justify-content: center; text-align: center;">
         {{ graphs.conclusion }}
     </h3>
-
-    <h2 class="sub-heading"> Activity Insight </h2>
     {% if unique_users.__len__()>3 %}
     <h3 style="justify-content: center; text-align: center;">
         Total Number of Users : {{ unique_users.__len__()-1}}
@@ -143,14 +142,16 @@
 </div>
 
 
-<!-- Container 6 : Result for links & Longest Message :  -->
+<!-- Container 6 : Result for Longest Message :  -->
 <div class="container"
     style="max-width: 900px; {% if not selected_user %}display: none;{% endif %} padding-bottom: 100px;">
 
     <h2 class="sub-heading"> Longest Message </h2>
+    {% for i in range(1,4) %}
     <div class="longest_msg" id="longest_msg">
-        {{ results.longest_msg }}
+        {{ results.longest_msg[i]}}
     </div>
+    {% endfor %}
     
     {% if unique_users.__len__() < 4 %}
     <div class="responseTime">
@@ -165,8 +166,24 @@
     {% endif %}
 </div>
 
+<!-- Container 7.1 : Result for Links :  -->
+<div class="container" style="max-width: 900px; {% if not selected_user %}display: none;{% endif %} padding-bottom: 100px;">
+    <div class="shared-links"> View Links </div>
+</div>
+
+
+<!-- Container 7.2 : Result for Links (Overlay Container) :  -->
+<!-- <div class="overlay-container" id="overlay-container">
+    <div class="overlay-content">
+        <span class="close-btn" onclick="closeOverlay()">&times;</span>
+        <ul id="links-list">
+        </ul>
+    </div>
+</div> -->
+
 <!-- Scripts :  -->
 <script>
+
     function changeColor(select) {
         var selectedOption = select.options[select.selectedIndex];
         selectedOption.style.color = 'black';
@@ -210,11 +227,12 @@
         resultDisplay.text(searchTerm + ' was used ' + count + 'times.');
         resultDisplay.css('display', 'block');
         resultDisplay.css('margin-top', '30px');
-    });
-} else {
+        });
+    } 
+    else {
     $('#searchButton').prop('disabled', true);
-}
-}
+        }
+    }
 
     function showCount(word, count) {
         var wordCountDisplay = document.getElementById('word-count-display');

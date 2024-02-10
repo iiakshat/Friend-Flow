@@ -66,7 +66,7 @@ def analyze(filepath):
     unique_users = df['user'].unique().tolist()
 
     return render_template('analyze.html', unique_users=unique_users, 
-                           freq_words={}, top_emojis={}, results={}, graphs={}, response_time={})
+                           freq_words={}, top_emojis={}, results={'longest_msg': []}, graphs={}, response_time={})
 
 
 @app.route("/perform_analysis", methods=["POST"])
@@ -98,9 +98,9 @@ def perform_analysis():
     else:
         busiest = busiest + ' did more Messages.'
         temp_df = df[df['user'] != 'Zuckerberg'].reset_index()
-        ignore_list = ["byee", "bye", "see you", "take care", 
-                       'dhyaan rakhna', 'dhyaan rakh', 'goodbye', 'byy', 
-                       'gudnight', 'gn', 'tc', 'sweet dreams', 'tata', 'chal thik hai']
+        ignore_list = {"byee", "bye", "see you", "take care",'dhyaan rakh', 
+                       'goodbye', 'byy', 'gudnight', 'gn', 'goodnight', 
+                       'tc', 'sweet dreams', 'tata', 'chal thik hai', 'see ya'}
         
         avg_time, fasterReply = average_reply_time(temp_df, ignore_list)
         del temp_df
@@ -130,7 +130,12 @@ def perform_analysis():
     cache[cache_key] = render_template('analyze.html', unique_users=unique_users, results=results,
                            selected_user=selected_user_display, graph_html=graph_html, 
                            busiest=busiest, wordcloud_image=wordcloud_image, response_time=avg_time,
-                           freq_words = freq_words, top_emojis=top_emojis, graphs=graphs, avg_time=avg_time)
+                           freq_words = freq_words, top_emojis=top_emojis, 
+                           graphs = {'month_wise': 'Monthly', 
+                            'daily' : 'daily_timeline_img', 
+                            'weekly' : 'weekly_active_img',
+                            'monthly' : 'monthly_active_img', 
+                            'conclusion' : 'conclusion'}, avg_time=avg_time)
     
     return cache[cache_key]
 
