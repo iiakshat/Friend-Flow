@@ -19,6 +19,11 @@ aadi
 aaj
 aap
 aapne
+aacha
+aachi
+aachaa
+aache
+ache
 aata
 aati
 aaya
@@ -32,6 +37,8 @@ able
 about
 above
 accha
+acche
+achha
 according
 accordingly
 acha
@@ -145,6 +152,7 @@ bhai
 bheetar
 bhej
 bhi
+bhii
 bhitar
 bht
 bilkul
@@ -288,13 +296,15 @@ go
 goes
 going
 gone
-good
 got
 gotten
 greetings
 guys
 h
 han
+haa
+ha
+haaa
 hann
 haan
 had
@@ -322,6 +332,10 @@ havent
 haven't
 having
 he
+hiii
+hii
+hi
+helloo
 hello
 help
 hence
@@ -491,8 +505,13 @@ kam
 kar
 karde
 kardete
+kraa
 kra
 kara
+krunga
+krungaa
+krungii
+krungi
 kare
 karega
 karegi
@@ -505,9 +524,12 @@ karne
 karni
 karo
 karta
+krte
+krti
 karte
 karti
 karu
+kru
 karun
 karunga
 karungi
@@ -617,6 +639,8 @@ mani
 mano
 many
 mat
+mtlb
+matlab
 may
 maybe
 me
@@ -643,6 +667,8 @@ much
 mjhe
 muje
 mujhe
+mujhse
+mujhsey
 must
 mustn
 mustnt
@@ -659,6 +685,7 @@ nhii
 nahi
 nahin
 nai
+naii
 name
 namely
 nd
@@ -735,6 +762,7 @@ overall
 own
 par
 pta
+paa
 pata
 pe
 pehla
@@ -981,6 +1009,7 @@ uses
 usi
 using
 uska
+uski
 uske
 usne
 uss
@@ -1070,6 +1099,7 @@ why
 will
 willing
 with
+thii
 within
 without
 wo
