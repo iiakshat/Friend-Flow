@@ -13,9 +13,13 @@ body,h1, form {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
 }
 
-h1, h3 {
-    text-align: center;
+h1 {
     color: #ffffff;
+} 
+
+h1, h3 {
+    max-width: 500px;
+    text-align: center;
     font-weight: 600;
     letter-spacing: 3px;
     transition: all 0.3s ease;
@@ -24,11 +28,12 @@ h1, h3 {
 h1:hover {
     color: black;
     letter-spacing: 10px;
+    font-size: larger;
 }
 
 h3:hover {
     color: #1D5D9B;
-    font-size: large;
+    font-size: larger;
 }
 
 form {
