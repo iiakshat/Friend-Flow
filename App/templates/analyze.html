@@ -109,7 +109,19 @@
 style="max-width: 900px; {% if not selected_user %}display: none;{% endif %}">
 
     <h2 class="sub-heading"> Activity Insight </h2>
+
+    <!-- Number of Users : -->
+    {% if unique_users.__len__()>3 %}
+    <h3 style="justify-content: center; text-align: center;">
+        Total Number of Users : {{ unique_users.__len__()-1}}
+    </h3>
+    {% endif %}
     
+    <!-- Summary/ Conclusion : -->
+    <h3 style="justify-content: center; text-align: center;">
+        {{ graphs.conclusion }}
+    </h3>
+
     <!-- Inner Container 1 : Graph - Month Wise : -->
     <div class="graph-container time_graph" id="graph-container">
         {{ graphs.month_wise | safe }}
@@ -130,28 +142,12 @@ style="max-width: 900px; {% if not selected_user %}display: none;{% endif %}">
         {{ graphs.monthly | safe }}
     </div>
     
-    <h3 style="justify-content: center; text-align: center;">
-        {{ graphs.conclusion }}
-    </h3>
-    {% if unique_users.__len__()>3 %}
-    <h3 style="justify-content: center; text-align: center;">
-        Total Number of Users : {{ unique_users.__len__()-1}}
-    </h3>
-    {% endif %}
-    
 </div>
 
 
 <!-- Container 6 : Result for Longest Message :  -->
 <div class="container"
     style="max-width: 900px; {% if not selected_user %}display: none;{% endif %} padding-bottom: 100px;">
-
-    <h2 class="sub-heading"> Longest Message </h2>
-    {% for i in range(1,4) %}
-    <div class="longest_msg" id="longest_msg">
-        {{ results.longest_msg[i]}}
-    </div>
-    {% endfor %}
     
     {% if unique_users.__len__() < 4 %}
     <div class="responseTime">
@@ -162,13 +158,21 @@ style="max-width: 900px; {% if not selected_user %}display: none;{% endif %}">
         {% endif %}
         {% endfor %}
         <h3>{{ results.fasterReply }}
-    </div>
+        </div>
     {% endif %}
-</div>
+    </div>
 
-<!-- Container 7.1 : Result for Links :  -->
-<div class="container" style="max-width: 900px; {% if not selected_user %}display: none;{% endif %} padding-bottom: 100px;">
-    <div class="shared-links"> View Links </div>
+    <h2 class="sub-heading"> Longest Message </h2>
+    {% for i in range(1,4) %}
+    <div class="longest_msg" id="longest_msg">
+        {{ results.longest_msg[i]}}
+    </div>
+    {% endfor %}
+    
+
+    <!-- Container 7.1 : Result for Links :  -->
+    <div class="container" style="max-width: 900px; {% if not selected_user %}display: none;{% endif %} padding-bottom: 100px;">
+        <div class="shared-links"> View Links </div>
 </div>
 
 
@@ -179,6 +183,16 @@ style="max-width: 900px; {% if not selected_user %}display: none;{% endif %}">
         <ul id="links-list">
         </ul>
     </div>
+</div> -->
+
+<!-- Container 8 : Emotions of User :  -->
+    <!-- <div class="container"
+        style="max-width: 900px; {% if not selected_user %}display: none;{% endif %}">
+
+        <h2 class="sub-heading"> Emotions </h2>
+        <div class="graph-container" id="graph-container">
+            {{ chatMood | safe }}
+        </div>
 </div> -->
 
 <!-- Scripts :  -->
