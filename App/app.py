@@ -6,7 +6,6 @@ from src.Preprocessor import preprocess
 from src.Stats import *
 from src.Response_time import average_reply_time
 
-
 app = Flask(__name__, static_url_path='/static')
 app.config.from_pyfile("config.cfg")
 
@@ -81,10 +80,13 @@ def perform_analysis():
     if selected_user == 'all':
         selected_user_display = "All Users"
         msgs, links, media, longest_msg = counter(None, df)
+        wordcloud_image, freq_words = frequent_words(df, None)
     else:
         selected_user_display = selected_user
         msgs, links, media, longest_msg = counter(selected_user, df)
-    
+        wordcloud_image, freq_words = frequent_words(df, selected_user)
+
+
     graph_html, busiest, x = most_busy_users(selected_user, df)
     fasterReply = ''
     avg_time = {}
@@ -104,38 +106,27 @@ def perform_analysis():
         
         avg_time, fasterReply = average_reply_time(temp_df, ignore_list)
         del temp_df
-
-    if selected_user == 'all':
-        wordcloud_image, freq_words = frequent_words(df, None)
-    else:
-        wordcloud_image, freq_words = frequent_words(df, selected_user)
     
     if not wordcloud_image:
         wordcloud_image = '<img src="static/images/wordcloud.png" style="margin-left: 110px">'
         
-    try:
-        countr = freq_words
-        freq_words = dict(freq_words.most_common(20))
-        top_emojis = most_common_emoji(selected_user, df)
-        graphs = activity(selected_user, df)
-    except:
-        freq_words = {}
-        top_emojis = {}
-        graphs = {}
+    countr = freq_words
+    freq_words = dict(freq_words.most_common(20))
+    top_emojis = most_common_emoji(selected_user, df)
+    graphs = activity(selected_user, df)
+    # chatMood = emotions(selected_user, df)
+    chatMood = ''
 
     results = {'msgs': msgs, 'links': links, 'media': media, 'longest_msg': longest_msg, 
             'fasterReply' : fasterReply}
+    
     
     delete_saved_file()
     cache[cache_key] = render_template('analyze.html', unique_users=unique_users, results=results,
                            selected_user=selected_user_display, graph_html=graph_html, 
                            busiest=busiest, wordcloud_image=wordcloud_image, response_time=avg_time,
                            freq_words = freq_words, top_emojis=top_emojis, 
-                           graphs = {'month_wise': 'Monthly', 
-                            'daily' : 'daily_timeline_img', 
-                            'weekly' : 'weekly_active_img',
-                            'monthly' : 'monthly_active_img', 
-                            'conclusion' : 'conclusion'}, avg_time=avg_time)
+                           graphs = graphs, avg_time=avg_time, chatMood=chatMood)
     
     return cache[cache_key]
 
