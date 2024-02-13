@@ -4,11 +4,12 @@ from .TextPreprocessor import *
 from .ChartGenerator import *
 from .Emotions import getEmotions
 
-links = []
+Links = []
 
 
 def counter(user, df):
-    global links
+    global Links
+    links = []
     queue = []
     longest_msg = ''
     msg_length = 0
@@ -51,6 +52,7 @@ def counter(user, df):
                 links.extend(link)
 
     queue.append(msg_length)
+    Links = links.copy()
     return msgs, len(links), media, queue[::-1]
 
 
@@ -129,7 +131,14 @@ def frequent_words(df, selected_user):
                    contour_color='transparent',
                    collocations=False).generate(final)
     
-    wordcloud = wordcloud_Generator(wordcloud)
+    plt.imshow(wordcloud, interpolation='bilinear', alpha=0.8)
+    plt.axis('off')
+    graph_data = BytesIO()
+    plt.savefig(graph_data, format='png', bbox_inches='tight', pad_inches=0)
+    graph_data.seek(0)
+    encoded_img = base64.b64encode(graph_data.getvalue()).decode('utf-8')
+    wordcloud = f'<img src="data:image/png;base64,{encoded_img}" alt="Wordcloud">'
+    
     return wordcloud, common_words
 
 
