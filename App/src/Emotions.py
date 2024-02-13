@@ -1,4 +1,4 @@
-import text2emotion as t2e
+# import text2emotion as t2e
 
 counter = {'Happy': 0, 'Angry': 0, 'Surprise': 0, 'Sad': 0, 'Fear': 0, 'Neutral':0}
 def emotionExtracter(emotions):
