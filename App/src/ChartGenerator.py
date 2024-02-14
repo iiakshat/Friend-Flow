@@ -6,20 +6,6 @@ import matplotlib.pyplot as plt
 
 use('Agg')
 
-# Word Cloud :
-def wordcloud_Generator(wordcloud):
-    
-    plt.imshow(wordcloud, interpolation='bilinear', alpha=0.8)
-    plt.axis('off')
-    graph_data = BytesIO()
-    plt.savefig(graph_data, format='png', bbox_inches='tight', pad_inches=0)
-    graph_data.seek(0)
-    encoded_img = base64.b64encode(graph_data.getvalue()).decode('utf-8')
-    graph_html = f'<img src="data:image/png;base64,{encoded_img}" alt="Matplotlib Graph">'
-    
-    return graph_html
-
-
 # Simple Plotter : 
 def generate_encoded_image(df, title, x_col, y_col, y_label, x_label):
     fig, ax = plt.subplots()
