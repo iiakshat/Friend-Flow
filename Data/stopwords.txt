@@ -114,6 +114,7 @@ bje
 baar
 bad
 bahut
+bhot
 bana
 banae
 banai
@@ -301,6 +302,7 @@ gotten
 greetings
 guys
 h
+hn
 han
 haa
 ha
@@ -505,6 +507,8 @@ kam
 kar
 karde
 kardete
+kr
+krra
 kraa
 kra
 kara
@@ -680,6 +684,8 @@ naa
 naah
 nhi
 nhiii
+nii
+ni
 nahin
 nhii
 nahi
