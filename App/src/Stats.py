@@ -190,7 +190,7 @@ def activity(selected_user,df):
         beg_Date = beg_Date + 'th' if beg_Date[0] != '0' else beg_Date[1] + 'th'
 
     conclusion1 = f'You both started talking on {beg_Date} of {beg_Mon}, {beg_year}.'
-    average_messages_per_day = df.shape[0] / df['date_only'].nunique()
+    average_messages_per_day = df.shape[0] // df['date_only'].nunique()
     active_day =  weekly_active.idxmax()
     active_time = int(df['hr'].value_counts().idxmax())
     if active_time:
