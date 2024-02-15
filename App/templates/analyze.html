@@ -149,19 +149,6 @@ style="max-width: 900px; {% if not selected_user %}display: none;{% endif %}">
 <div class="container"
     style="max-width: 900px; {% if not selected_user %}display: none;{% endif %} padding-bottom: 100px;">
     
-    {% if unique_users.__len__() < 4 %}
-    <div class="responseTime">
-        <h2 class="sub-heading"> Response Time </h2>
-        {% for user in unique_users %}
-        {% if user!='Zuckerberg' %}
-        <h3>{{ user.capitalize() }} replies in {{ response_time[user] }} Mins. </h3>
-        {% endif %}
-        {% endfor %}
-        <h3>{{ results.fasterReply }}
-        </div>
-    {% endif %}
-    </div>
-
     <h2 class="sub-heading"> Longest Message </h2>
     {% for i in range(1,4) %}
     <div class="longest_msg" id="longest_msg">
@@ -169,6 +156,19 @@ style="max-width: 900px; {% if not selected_user %}display: none;{% endif %}">
     </div>
     {% endfor %}
     
+    <div class="responseTime">
+    {% if unique_users.__len__() < 4 %}
+        <h3 class="sub-heading"> Response Time </h3>
+        {% for user in unique_users %}
+        {% if user!='Zuckerberg' %}
+        <h3>{{ user.capitalize() }} replies in {{ response_time[user] }} Mins. </h3>
+        {% endif %}
+        {% endfor %}
+        <h3>{{ results.fasterReply }}
+            {% endif %}
+    </div>
+    
+</div>
 
     <!-- Container 7.1 : Result for Links :  -->
     <div class="container" style="max-width: 900px; {% if not selected_user %}display: none;{% endif %} padding-bottom: 100px;">
