@@ -1,6 +1,5 @@
 import base64
 from io import BytesIO
-from wordcloud import WordCloud
 from matplotlib import use
 import matplotlib.pyplot as plt
 
