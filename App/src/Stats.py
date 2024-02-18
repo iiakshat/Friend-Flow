@@ -3,6 +3,13 @@ from collections import Counter
 from .TextPreprocessor import *
 from .ChartGenerator import *
 from .Emotions import getEmotions
+import base64
+from io import BytesIO
+from matplotlib import use
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud
+
+use('Agg')
 
 Links = []
 
@@ -137,9 +144,9 @@ def frequent_words(df, selected_user):
     plt.savefig(graph_data, format='png', bbox_inches='tight', pad_inches=0)
     graph_data.seek(0)
     encoded_img = base64.b64encode(graph_data.getvalue()).decode('utf-8')
-    wordcloud = f'<img src="data:image/png;base64,{encoded_img}" alt="Wordcloud">'
+    wordcloud_img = f'<img src="data:image/png;base64,{encoded_img}" alt="Wordcloud">'
     
-    return wordcloud, common_words
+    return wordcloud_img, common_words
 
 
 def most_common_emoji(selected_user,df):
@@ -189,7 +196,7 @@ def activity(selected_user,df):
     else:
         beg_Date = beg_Date + 'th' if beg_Date[0] != '0' else beg_Date[1] + 'th'
 
-    conclusion1 = f'You both started talking on {beg_Date} of {beg_Mon}, {beg_year}.'
+    conclusion1 = f'You all started talking on {beg_Date} of {beg_Mon}, {beg_year}.'  if df['user'].nunique() > 3 else f'You both started talking on {beg_Date} of {beg_Mon}, {beg_year}.'
     average_messages_per_day = df.shape[0] // df['date_only'].nunique()
     active_day =  weekly_active.idxmax()
     active_time = int(df['hr'].value_counts().idxmax())
