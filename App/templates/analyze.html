@@ -91,7 +91,7 @@
     <!-- Inner Container 3 : Frequent Emojis : -->
     <div class="frequent-words-container" style="margin-bottom: 80px;">
         {% if top_emojis %}
-        <h3 style="text-align: center;"> Most Used Emojis</h3>
+        <h3 style="text-align: center; margin-left: 130px;"> Most Used Emojis</h3>
         {% endif %}
         <div class="word-container">
         {% for emoji, count in top_emojis.items() %}
@@ -171,19 +171,19 @@ style="max-width: 900px; {% if not selected_user %}display: none;{% endif %}">
 </div>
 
     <!-- Container 7.1 : Result for Links :  -->
-    <div class="container" style="max-width: 900px; {% if not selected_user %}display: none;{% endif %} padding-bottom: 100px;">
-        <div class="shared-links"> View Links </div>
-</div>
+    <div class="container" 
+        style="max-width: 900px; {% if not selected_user %}display: none;{% endif %} padding-bottom: 100px;">
+
+            <button onclick="openOverlay()">View Links</button>
+    </div>
 
 
 <!-- Container 7.2 : Result for Links (Overlay Container) :  -->
-<!-- <div class="overlay-container" id="overlay-container">
-    <div class="overlay-content">
-        <span class="close-btn" onclick="closeOverlay()">&times;</span>
-        <ul id="links-list">
-        </ul>
+    <div id="overlay" class="overlay">
+        <span class="close" onclick="closeOverlay()">&times;</span>
+       
+        <div id="embedded-links"></div>
     </div>
-</div> -->
 
 <!-- Container 8 : Emotions of User :  -->
     <!-- <div class="container"
@@ -262,6 +262,39 @@ style="max-width: 900px; {% if not selected_user %}display: none;{% endif %}">
             wordCountDisplay.style.display = 'none';
         }
     }
+
+    function openOverlay() {
+    console.log('open overlay');
+    {% print('open overlay') %}
+    var overlay = document.getElementById('overlay');
+    overlay.style.display = 'block';
+
+
+    var embeddedLinks = document.getElementById('embedded-links');
+    var links = {{ results.links|tojson }};
+    {% print(links) %}
+    console.log(links);
+    links.forEach(function(link) {
+        {% print(link) %}
+        console.log(link);
+        var embedElement = document.createElement('embed');
+        embedElement.src = link;
+        embedElement.type = 'text/html';
+        embedElement.width = '100%';
+        embedElement.height = '600px';
+        embeddedLinks.appendChild(embedElement);
+    });
+}
+
+function closeOverlay() {
+    var overlay = document.getElementById('overlay');
+    overlay.style.display = 'none';
+    
+
+    var embeddedLinks = document.getElementById('embedded-links');
+    embeddedLinks.innerHTML = '';
+}
+
 </script>
 </body>
 
