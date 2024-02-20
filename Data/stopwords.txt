@@ -110,6 +110,7 @@ avum
 aya
 aye
 baad
+baat
 bje
 baar
 bad
@@ -257,6 +258,9 @@ else
 elsewhere
 enough
 etc
+esa
+ese
+essa
 even
 ever
 every
@@ -595,8 +599,12 @@ kyu
 kyuki
 kyun
 kyunki
+lg
+lgega
+lgta
 lagta
 lagte
+lagega
 lagti
 last
 lately
@@ -778,6 +786,7 @@ people
 per
 perhaps
 phla
+phir
 phle
 phli
 placed
