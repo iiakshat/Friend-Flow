@@ -27,7 +27,7 @@ def average_reply_time(df, ignore_list):
                 time_diff = null_time
                 
             # User reply also byee.
-            if is_ignore_word(row['message'], ignore_list):
+            if is_ignore_word(row['message'].lower(), ignore_list):
                 ignore_flag = True
             
             else:
@@ -50,7 +50,7 @@ def average_reply_time(df, ignore_list):
                 current_user_start_time = row['date']
 
             # User reply also byee.
-            if is_ignore_word(row['message'], ignore_list):
+            if is_ignore_word(row['message'].lower(), ignore_list):
                 ignore_flag = True   
             
             reply_times[row['user']].append(0)
