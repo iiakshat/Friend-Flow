@@ -3,6 +3,8 @@ from werkzeug.utils import secure_filename
 import secrets
 import os
 import src.Logging
+import logging as log
+from waitress import serve
 from src.Preprocessor import preprocess
 from src.Stats import *
 from src.Response_time import average_reply_time
@@ -29,7 +31,7 @@ def allowed_file(filename):
         and filename.rsplit(".", 1)[1].lower() in app.config["ALLOWED_EXTENSION"]
     )
 
-@app.route('/upload', methods=['GET', 'POST'])
+@app.route(f'/upload', methods=['GET', 'POST'])
 def upload():
     global filename
     if request.method == 'POST':
@@ -64,15 +66,17 @@ def analyze(filepath):
 
     df = preprocess(file)
     unique_users = df['user'].unique().tolist()
-
-    return render_template('analyze.html', unique_users=unique_users, 
-                           freq_words={}, top_emojis={}, results={'longest_msg': [], 'links': []}, graphs={}, response_time={})
+    print('Unique USers Created.')
+    return render_template('analyze.html', unique_users=unique_users, freq_words={}, 
+                           top_emojis={}, results={'longest_msg': [], 'links': []}, graphs={}, response_time={})
 
 
 @app.route("/perform_analysis", methods=["POST"])
 def perform_analysis():
+    print("Performing analysis...")
     global df, countr
     selected_user = request.form.get("user")
+    print("Selected user:", selected_user)
 
     cache_key = selected_user + filename
     if cache_key in cache:
@@ -111,10 +115,16 @@ def perform_analysis():
     if not wordcloud_image:
         wordcloud_image = '<img src="static/images/wordcloud.png" style="margin-left: 110px">'
         
-    countr = freq_words
-    freq_words = dict(freq_words.most_common(20))
-    top_emojis = most_common_emoji(selected_user, df)
-    graphs = activity(selected_user, df)
+    try:
+        countr = freq_words
+        freq_words = dict(freq_words.most_common(20))
+        top_emojis = most_common_emoji(selected_user, df)
+        graphs = activity(selected_user, df)
+    except:
+        freq_words = {}
+        top_emojis = {}
+        graphs = {}
+
     # chatMood = emotions(selected_user, df)
     chatMood = ''
 
@@ -148,4 +158,4 @@ def delete_saved_file():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=80)
+    serve(app, host="0.0.0.0", port=80)
