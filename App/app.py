@@ -2,12 +2,22 @@ from flask import Flask, render_template, request, flash, jsonify
 from werkzeug.utils import secure_filename
 import secrets
 import os
-import src.Logging
-import logging as log
+import logging
+from src.Logging import LOG_FILE_PATH
 from waitress import serve
 from src.Preprocessor import preprocess
 from src.Stats import *
 from src.Response_time import average_reply_time
+
+# Configure logging
+logging.basicConfig(
+    filename=LOG_FILE_PATH,
+    format="[ %(asctime)s ] %(lineno)d %(name)s - %(levelname)s - %(message)s",
+    level=logging.INFO,
+    encoding='utf-8'
+)
+
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__, static_url_path='/static')
 app.config.from_pyfile("config.cfg")
@@ -23,6 +33,7 @@ filename = ''
 
 @app.route('/')
 def home():
+    logger.info('Creating Home Page...')
     return render_template('index.html')
 
 def allowed_file(filename):
@@ -50,6 +61,7 @@ def upload():
             filepath = os.path.join(folder, filename)
             file.save(filepath)
             flash("success")
+            logger.info('File Uploaded Successfully...')
             return analyze(filepath)
     
         else:
@@ -58,7 +70,7 @@ def upload():
     return render_template("index.html")
 
 
-@app.route("/analyze", methods=["GET"])
+@app.route("/report", methods=["GET"])
 def analyze(filepath):
     global df, unique_users
     with open(filepath, 'r', encoding='utf-8') as f:
@@ -66,20 +78,22 @@ def analyze(filepath):
 
     df = preprocess(file)
     unique_users = df['user'].unique().tolist()
-    print('Unique USers Created.')
+    logger.info('Creating Report Page...')
     return render_template('analyze.html', unique_users=unique_users, freq_words={}, 
                            top_emojis={}, results={'longest_msg': [], 'links': []}, graphs={}, response_time={})
 
 
 @app.route("/perform_analysis", methods=["POST"])
 def perform_analysis():
-    print("Performing analysis...")
+    logger.info('Performing Analysis...')
     global df, countr
     selected_user = request.form.get("user")
-    print("Selected user:", selected_user)
 
     cache_key = selected_user + filename
+    logger.info(f'{cache_key} Created...')
+
     if cache_key in cache:
+        logger.info('Loading Cached Data...')
         return cache[cache_key]
     
     if selected_user == 'all':
@@ -91,6 +105,8 @@ def perform_analysis():
         msgs, links, media, longest_msg = counter(selected_user, df)
         wordcloud_image, freq_words = frequent_words(df, selected_user)
 
+    logger.info('Loading Counter Function...')
+    logger.info('Finding Busiest Person...')
 
     graph_html, busiest, x = most_busy_users(selected_user, df)
     fasterReply = ''
@@ -108,10 +124,11 @@ def perform_analysis():
         ignore_list = {"byee", "bye", "see you", "take care",'dhyaan rakh', 
                        'goodbye', 'byy', 'gudnight', 'gn', 'goodnight', 
                        'tc', 'sweet dreams', 'tata', 'chal thik hai', 'see ya'}
-        
+
         avg_time, fasterReply = average_reply_time(temp_df, ignore_list)
         del temp_df
     
+    logger.info('Rendering Wordcloud...')
     if not wordcloud_image:
         wordcloud_image = '<img src="static/images/wordcloud.png" style="margin-left: 110px">'
         
@@ -120,10 +137,16 @@ def perform_analysis():
         freq_words = dict(freq_words.most_common(20))
         top_emojis = most_common_emoji(selected_user, df)
         graphs = activity(selected_user, df)
+
+        logger.info('Finding Emojis 😆😉😋😘...')
+        logger.info('Drawing Graphs 📊📈')
+
     except:
         freq_words = {}
         top_emojis = {}
         graphs = {}
+        logger.error('No Chat Found!')
+        logger.error('Failed to Render Graphs')
 
     # chatMood = emotions(selected_user, df)
     chatMood = ''
@@ -131,7 +154,7 @@ def perform_analysis():
     results = {'msgs': msgs, 'links': links, 'media': media, 'longest_msg': longest_msg, 
             'fasterReply' : fasterReply}
     
-    
+    logger.warning('Removing File from the Server.')
     delete_saved_file()
     cache[cache_key] = render_template('analyze.html', unique_users=unique_users, results=results,
                            selected_user=selected_user_display, graph_html=graph_html, 
