@@ -169,7 +169,8 @@ def activity(selected_user,df):
 
     if selected_user != 'all': df = df[df['user'] == selected_user]
 
-    df['date_only'] = df['date'].dt.date
+    dates = df['date'].dt.date
+    df.loc[:,'date_only'] = dates
 
     time_df = df.groupby(['year', 'month_num', 'month']).count()['message'].reset_index()
     daily_timeline = df.groupby('date_only').count()['message'].reset_index()
