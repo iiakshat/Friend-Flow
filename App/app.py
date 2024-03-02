@@ -3,19 +3,11 @@ from werkzeug.utils import secure_filename
 import secrets
 import os
 import logging
-from src.Logging import LOG_FILE_PATH
+import src.Logging
 from waitress import serve
 from src.Preprocessor import preprocess
 from src.Stats import *
 from src.Response_time import average_reply_time
-
-# Configure logging
-logging.basicConfig(
-    filename=LOG_FILE_PATH,
-    format="[ %(asctime)s ] %(lineno)d %(name)s - %(levelname)s - %(message)s",
-    level=logging.INFO,
-    encoding='utf-8'
-)
 
 logger = logging.getLogger(__name__)
 
