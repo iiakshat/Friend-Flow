@@ -72,7 +72,7 @@ def analyze(filepath):
     unique_users = df['user'].unique().tolist()
     logger.info('Creating Report Page...')
     return render_template('analyze.html', unique_users=unique_users, freq_words={}, 
-                           top_emojis={}, results={'longest_msg': [], 'links': []}, graphs={}, response_time={})
+                           top_emojis={}, results={'longest_msg': [], 'links': []}, graphs={}, response_time={}, text1=' '.join(df['message'].head().to_list()), text2=' '.join(df['message'].tail().to_list()))
 
 
 @app.route("/perform_analysis", methods=["POST"])
